@@ -1,0 +1,73 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Customer Information
+  email             String
+  name              String
+  phone             String?
+  
+  // Order Details
+  productType       String   // "single" or "subscription"
+  quantity          Int      @default(1)
+  amount            Int      // Amount in cents
+  
+  // Fulfillment
+  fulfillmentType   String   // "pickup" or "delivery"
+  pickupLocation    String?  // "downtown" or "westside"
+  deliveryAddress   String?
+  deliveryCity      String?
+  deliveryState     String?
+  deliveryZip       String?
+  
+  // Payment Information
+  stripeSessionId   String   @unique
+  stripeCustomerId  String?
+  stripePriceId     String
+  paymentStatus     String   @default("pending") // "pending", "paid", "failed"
+  
+  // Subscription Info (if applicable)
+  stripeSubscriptionId String?
+  subscriptionStatus   String? // "active", "canceled", "past_due"
+  
+  // Additional Notes
+  notes             String?
+  
+  @@index([email])
+  @@index([stripeSessionId])
+  @@index([createdAt])
+}
+
+model Inventory {
+  id                String   @id @default(cuid())
+  date              DateTime @unique @default(now())
+  totalAvailable    Int      @default(20)
+  boxesSold         Int      @default(0)
+  boxesRemaining    Int      @default(20)
+  
+  @@index([date])
+}
+
+model Subscriber {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  createdAt         DateTime @default(now())
+  isActive          Boolean  @default(true)
+  source            String?  // "homepage", "popup", etc.
+  
+  @@index([email])
+  @@index([createdAt])
+}
