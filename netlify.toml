@@ -1,39 +1,9 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+[build]
+  command = "npm run build"
+  publish = ".next"
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+[build.environment]
+  NODE_VERSION = "18"
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# prisma
-/prisma/*.db
-/prisma/*.db-journal
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
