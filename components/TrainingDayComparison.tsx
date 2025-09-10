@@ -1,4 +1,4 @@
-import { Check, X, TrendingUp } from 'lucide-react'
+import { Check, X, TrendingUp, Trophy, DollarSign, Target } from 'lucide-react'
 
 export default function TrainingDayComparison() {
   return (
@@ -12,8 +12,9 @@ export default function TrainingDayComparison() {
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         {/* FuelBox */}
         <div className="bg-white rounded-3xl shadow-xl p-6 border-3 border-green-500 relative transform hover:scale-[1.02] transition-transform">
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-            🏆 WINNER - BEST VALUE
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
+            <Trophy className="w-4 h-4" />
+            WINNER - BEST VALUE
           </div>
           
           <div className="text-center mb-6 pt-4">
@@ -69,15 +70,15 @@ export default function TrainingDayComparison() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-2 pt-4 border-t">
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">1,085</p>
+                <p className="text-2xl font-black text-gray-900">1,000</p>
                 <p className="text-xs text-gray-600">Calories</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">67g</p>
+                <p className="text-2xl font-black text-gray-900">65g</p>
                 <p className="text-xs text-gray-600">Carbs</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">37g</p>
+                <p className="text-2xl font-black text-gray-900">35g</p>
                 <p className="text-xs text-gray-600">Fats</p>
               </div>
             </div>
@@ -179,13 +180,13 @@ export default function TrainingDayComparison() {
             <p className="text-sm opacity-90 mt-1">100g vs 60g</p>
           </div>
           <div>
-            <span className="text-5xl mb-3 block">💰</span>
+            <DollarSign className="w-12 h-12 mx-auto mb-3 text-green-200" />
             <p className="text-4xl font-black mb-2">$5</p>
             <p className="font-semibold">More Only</p>
             <p className="text-sm opacity-90 mt-1">Complete meal vs single item</p>
           </div>
           <div>
-            <span className="text-5xl mb-3 block">🎯</span>
+            <Target className="w-12 h-12 mx-auto mb-3 text-green-200" />
             <p className="text-4xl font-black mb-2">20%</p>
             <p className="font-semibold">Better Value</p>
             <p className="text-sm opacity-90 mt-1">Per gram of protein</p>
@@ -200,7 +201,7 @@ export default function TrainingDayComparison() {
             onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-white text-gray-900 px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg inline-block"
           >
-            Order FuelBox Instead →
+            Order FuelBox Instead
           </button>
         </div>
       </div>
