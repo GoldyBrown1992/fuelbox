@@ -229,7 +229,7 @@ export default function ProductCard() {
                   ) : (
                     <span className="flex items-center justify-center gap-2">
                       <TrendingUp className="w-5 h-5" />
-                      Subscribe $499/mo
+                      Subscribe $499.99/mo
                     </span>
                   )}
                 </button>
