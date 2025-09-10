@@ -34,7 +34,7 @@ export default function TrainingDayComparison() {
             <div className="bg-green-100 rounded-xl p-4 border-2 border-green-300">
               <div className="flex justify-between items-center">
                 <span className="font-bold text-green-700">PROTEIN</span>
-                <span className="text-3xl font-black text-green-700">108g</span>
+                <span className="text-3xl font-black text-green-700">100g</span>
               </div>
               <div className="text-xs text-green-600 mt-1">
                 Pizza wrap + 3 eggs + Greek yogurt
@@ -84,7 +84,7 @@ export default function TrainingDayComparison() {
 
             {/* Value Badge */}
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-3 text-center">
-              <p className="font-black">$0.185 per gram of protein</p>
+              <p className="font-black">$0.20 per gram of protein</p>
             </div>
           </div>
         </div>
@@ -92,12 +92,11 @@ export default function TrainingDayComparison() {
         {/* Typical Meal Plan */}
         <div className="bg-white rounded-3xl shadow-xl p-6 opacity-95 relative">
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gray-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-            Typical Meal Plan
+            Typical Meal Prep
           </div>
           
           <div className="text-center mb-6 pt-4">
-            <h3 className="text-2xl font-black text-gray-900 mb-2">Typical Bowl/Wrap</h3>
-            <p className="text-gray-600">King George Blvd Location</p>
+            <h3 className="text-2xl font-black text-gray-900 mb-2">Standard Protein Bowl</h3>
           </div>
 
           <div className="space-y-4">
@@ -110,13 +109,13 @@ export default function TrainingDayComparison() {
             </div>
 
             {/* Protein */}
-            <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200">
+            <div className="bg-yellow-50 rounded-xl p-4 border-2 border-yellow-200">
               <div className="flex justify-between items-center">
-                <span className="font-bold text-red-600">PROTEIN</span>
-                <span className="text-3xl font-black text-red-600">35g</span>
+                <span className="font-bold text-yellow-700">PROTEIN</span>
+                <span className="text-3xl font-black text-yellow-700">60g</span>
               </div>
-              <div className="text-xs text-red-500 mt-1">
-                Standard 4oz chicken portion
+              <div className="text-xs text-yellow-600 mt-1">
+                Standard 6oz protein portion
               </div>
             </div>
 
@@ -129,7 +128,7 @@ export default function TrainingDayComparison() {
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <X className="w-4 h-4 text-red-500 flex-shrink-0" />
-                <span>Standard 4oz protein portion</span>
+                <span>Basic protein and carbs only</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <X className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -148,23 +147,23 @@ export default function TrainingDayComparison() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-2 pt-4 border-t">
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">~600</p>
+                <p className="text-2xl font-black text-gray-900">600</p>
                 <p className="text-xs text-gray-600">Calories</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">~50g</p>
+                <p className="text-2xl font-black text-gray-900">60g</p>
                 <p className="text-xs text-gray-600">Carbs</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-gray-900">~20g</p>
+                <p className="text-2xl font-black text-gray-900">15g</p>
                 <p className="text-xs text-gray-600">Fats</p>
               </div>
             </div>
 
             {/* Value Badge */}
             <div className="bg-gray-200 text-gray-700 rounded-xl p-3 text-center">
-              <p className="font-black">$0.43 per gram of protein</p>
-              <p className="text-xs mt-1 text-red-600">2.3X MORE EXPENSIVE!</p>
+              <p className="font-black">$0.25 per gram of protein</p>
+              <p className="text-xs mt-1 text-red-600">25% MORE EXPENSIVE!</p>
             </div>
           </div>
         </div>
@@ -175,9 +174,9 @@ export default function TrainingDayComparison() {
         <div className="grid md:grid-cols-3 gap-6 text-center">
           <div>
             <TrendingUp className="w-12 h-12 mx-auto mb-3 text-green-200" />
-            <p className="text-4xl font-black mb-2">3X</p>
+            <p className="text-4xl font-black mb-2">67%</p>
             <p className="font-semibold">More Protein</p>
-            <p className="text-sm opacity-90 mt-1">108g vs 35g</p>
+            <p className="text-sm opacity-90 mt-1">100g vs 60g</p>
           </div>
           <div>
             <span className="text-5xl mb-3 block">💰</span>
@@ -187,7 +186,7 @@ export default function TrainingDayComparison() {
           </div>
           <div>
             <span className="text-5xl mb-3 block">🎯</span>
-            <p className="text-4xl font-black mb-2">56%</p>
+            <p className="text-4xl font-black mb-2">20%</p>
             <p className="font-semibold">Better Value</p>
             <p className="text-sm opacity-90 mt-1">Per gram of protein</p>
           </div>
@@ -195,7 +194,7 @@ export default function TrainingDayComparison() {
 
         <div className="mt-8 text-center">
           <p className="text-2xl font-black mb-4">
-            "Other meal plan services cannot compete with us!"
+            "Why settle for less protein when you can fuel your gains properly?"
           </p>
           <button 
             onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
