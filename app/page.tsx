@@ -54,7 +54,7 @@ export default function Home() {
                   </div>
                   <h3 className="font-bold text-lg mb-2">Unbeatable Value</h3>
                   <p className="text-gray-600 text-sm">
-                    108g protein for $20. That's less than 20¢ per gram of protein!
+                    100g protein for $20.
                   </p>
                 </div>
 
