@@ -1,124 +1,93 @@
 import Hero from '@/components/Hero'
 import ScarcityInventory from '@/components/ScarcityInventory'
 import ProductCard from '@/components/ProductCard'
-import NutritionCards from '@/components/NutritionCards'
-import InfluencerSection from '@/components/InfluencerSection'
+import NutritionComparison from '@/components/NutritionComparison'
 import BottomNav from '@/components/BottomNav'
 
 export default function Home() {
   return (
     <>
-      <main className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-green-50 pb-20 md:pb-0">
-        {/* Animated background elements */}
+      <main className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
+        {/* Pizza-themed background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-amber-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-green-300 rounded-full blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-red-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-orange-300 rounded-full blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
         </div>
 
-        {/* Main Content */}
+        {/* Compact Hero + Scarcity in one section */}
         <div className="relative z-10">
-          {/* Hero Section */}
           <Hero />
-
-          {/* Scarcity Counter - Sticky on mobile */}
-          <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-amber-200 md:relative md:bg-transparent md:border-0">
+          
+          {/* Sticky Scarcity Counter */}
+          <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-red-200">
             <ScarcityInventory />
           </div>
 
-          {/* Main Product Card */}
-          <section className="container mx-auto px-4 py-8">
+          {/* Main Product Section - More Compact */}
+          <section id="product" className="container mx-auto px-4 py-6">
             <ProductCard />
           </section>
 
-          {/* Nutrition Information */}
-          <section className="container mx-auto px-4 py-8">
-            <h2 className="text-3xl md:text-4xl font-black text-center mb-8 bg-gradient-to-r from-amber-600 to-green-600 bg-clip-text text-transparent">
-              Perfectly Balanced Macros
-            </h2>
-            <NutritionCards />
+          {/* Nutrition Comparison */}
+          <section id="nutrition" className="container mx-auto px-4 py-6">
+            <NutritionComparison />
           </section>
 
-          {/* Social Proof */}
-          <section className="container mx-auto px-4 py-8">
-            <InfluencerSection />
-          </section>
+          {/* Trust & CTA Section - Compact */}
+          <section className="container mx-auto px-4 py-8 mb-20 md:mb-8">
+            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {/* Trust Badges */}
+              <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-xl">
+                <h3 className="font-bold text-lg mb-4">Why Choose FuelBox?</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🍕</span>
+                    <div>
+                      <p className="font-semibold">Pizza Flavor, Zero Guilt</p>
+                      <p className="text-sm text-gray-600">All the taste, 4x the protein</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">💪</span>
+                    <div>
+                      <p className="font-semibold">108g Premium Protein</p>
+                      <p className="text-sm text-gray-600">Chicken, eggs, Greek yogurt</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🚚</span>
+                    <div>
+                      <p className="font-semibold">Fresh Daily Delivery</p>
+                      <p className="text-sm text-gray-600">Never frozen, made fresh</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">⚡</span>
+                    <div>
+                      <p className="font-semibold">Ready in 3 Minutes</p>
+                      <p className="text-sm text-gray-600">Microwave & enjoy</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Trust Badges */}
-          <section className="container mx-auto px-4 py-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <div className="bg-white/90 backdrop-blur rounded-2xl p-4 text-center shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-3xl mb-2">🚚</div>
-                <p className="font-bold text-sm">Free Delivery</p>
-                <p className="text-xs text-gray-600">Orders over $100</p>
-              </div>
-              <div className="bg-white/90 backdrop-blur rounded-2xl p-4 text-center shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-3xl mb-2">❄️</div>
-                <p className="font-bold text-sm">Fresh Daily</p>
-                <p className="text-xs text-gray-600">Never frozen</p>
-              </div>
-              <div className="bg-white/90 backdrop-blur rounded-2xl p-4 text-center shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-3xl mb-2">💪</div>
-                <p className="font-bold text-sm">100g Protein</p>
-                <p className="text-xs text-gray-600">Guaranteed</p>
-              </div>
-              <div className="bg-white/90 backdrop-blur rounded-2xl p-4 text-center shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-3xl mb-2">⭐</div>
-                <p className="font-bold text-sm">5-Star Rated</p>
-                <p className="text-xs text-gray-600">500+ Reviews</p>
-              </div>
-            </div>
-          </section>
-
-          {/* FAQ Section */}
-          <section className="container mx-auto px-4 py-12">
-            <h2 className="text-3xl md:text-4xl font-black text-center mb-8">Common Questions</h2>
-            <div className="max-w-2xl mx-auto space-y-4">
-              <details className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg group">
-                <summary className="font-bold text-lg cursor-pointer flex justify-between items-center">
-                  How do I heat the meal?
-                  <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
-                </summary>
-                <p className="mt-4 text-gray-700">
-                  Microwave for 3-4 minutes or oven at 350°F for 15 minutes. Each meal comes with detailed heating instructions.
+              {/* Final CTA */}
+              <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-6 text-white shadow-xl">
+                <h3 className="text-2xl font-black mb-3">
+                  Limited Daily Supply!
+                </h3>
+                <p className="mb-4 opacity-95">
+                  Only 20 Pizza Wraps made fresh each day. When they're gone, they're gone.
                 </p>
-              </details>
-              <details className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg group">
-                <summary className="font-bold text-lg cursor-pointer flex justify-between items-center">
-                  What&apos;s the protein source?
-                  <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
-                </summary>
-                <p className="mt-4 text-gray-700">
-                  Premium blend of grilled chicken breast (60g), wild-caught salmon (25g), and grass-fed beef (15g).
-                </p>
-              </details>
-              <details className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg group">
-                <summary className="font-bold text-lg cursor-pointer flex justify-between items-center">
-                  Can I freeze the meals?
-                  <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
-                </summary>
-                <p className="mt-4 text-gray-700">
-                  Yes! Meals stay fresh for 5 days refrigerated or up to 3 months frozen. Thaw overnight before heating.
-                </p>
-              </details>
-            </div>
-          </section>
-
-          {/* Bottom CTA */}
-          <section className="container mx-auto px-4 py-12 mb-20 md:mb-12">
-            <div className="bg-gradient-to-r from-amber-500 to-green-500 rounded-3xl p-8 md:p-12 text-white text-center shadow-2xl">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">
-                Ready to Fuel Your Gains?
-              </h2>
-              <p className="text-xl mb-8 opacity-95">
-                Join thousands of athletes who trust FuelBox for their protein needs
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg">
+                <button 
+                  onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full bg-white text-gray-900 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform shadow-lg"
+                >
                   Order Now - $20
                 </button>
-                <button className="bg-black/20 backdrop-blur text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-black/30 transition-colors">
-                  Subscribe & Save
-                </button>
+                <p className="text-sm mt-3 text-center opacity-90">
+                  🔥 Selling fast today
+                </p>
               </div>
             </div>
           </section>
