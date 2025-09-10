@@ -63,7 +63,7 @@ export default function Home() {
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-3xl">⏱️</span>
                   </div>
-                  <h3 className="font-bold text-lg mb-2">Ready in 3 Minutes</h3>
+                  <h3 className="font-bold text-lg mb-2">Ready in Minutes</h3>
                   <p className="text-gray-600 text-sm">
                     No prep, no cleanup. Just heat and fuel your gains.
                   </p>
@@ -84,10 +84,10 @@ export default function Home() {
               {/* Final CTA */}
               <div className="mt-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white text-center">
                 <p className="text-2xl font-black mb-3">
-                  Stop Overpaying for Under-Protein
+                  Stop Overpaying for Less Protein
                 </p>
                 <p className="mb-4 opacity-95">
-                  Why pay $15 at Training Day for 35g protein when you can get 108g for $20?
+                  Why pay $15 for 35g protein when you can get 108g for $20?
                 </p>
                 <button 
                   onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
