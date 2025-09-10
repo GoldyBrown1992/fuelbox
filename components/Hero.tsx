@@ -44,7 +44,7 @@ export default function Hero() {
 
           {/* Value Proposition */}
           <p className="text-xl md:text-2xl mb-8 text-white/95 font-semibold max-w-3xl mx-auto">
-            3X More Protein Than Training Day Cafe. Same Price. Better Fuel.
+            3X More Protein Than our competitors. Better Price. Better Fuel.
           </p>
 
           {/* Quick Benefits */}
@@ -80,7 +80,7 @@ export default function Hero() {
               onClick={() => document.getElementById('comparison')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-green-800/50 backdrop-blur text-white border-2 border-white/50 px-10 py-4 rounded-full font-bold text-lg hover:bg-green-800/70 transition-colors flex items-center justify-center gap-2"
             >
-              <span>Compare to Training Day</span>
+              <span>Compare to Typical Meal Plan</span>
               <Target className="w-5 h-5" />
             </button>
           </div>
