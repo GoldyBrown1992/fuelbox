@@ -2,19 +2,19 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'FuelBox Pizza Wrap - 108g Protein | Pizza Without The Guilt',
-  description: 'Get 108g of premium protein in a delicious pizza wrap. Complete meal with eggs, Greek yogurt, and fresh fruit. Only 20 boxes available daily. Order now!',
+  title: 'FuelBox Pizza Wrap Meal - 108g Protein | Pizza Without The Guilt',
+  description: 'Get 100g of premium protein. Complete meal with a gourmet wrap, 3 eggs, Greek yogurt and fresh fruit. Only 20 boxes available daily. Order now!',
   keywords: 'pizza wrap, high protein meals, 108g protein, meal delivery, healthy pizza, athlete nutrition, performance meals',
   metadataBase: new URL('https://fuelbox.netlify.app'),
   openGraph: {
-    title: 'FuelBox Pizza Wrap - 108g Protein',
+    title: 'FuelBox Pizza Wrap - 100g Protein',
     description: 'Pizza without the guilt. 108g protein, complete nutrition, fresh daily.',
     images: ['/og-image.jpg'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FuelBox Pizza Wrap - 108g Protein',
+    title: 'FuelBox Pizza Wrap - 100g Protein',
     description: 'Pizza flavor with 4x the protein. Limited to 20 daily.',
   },
   robots: {
