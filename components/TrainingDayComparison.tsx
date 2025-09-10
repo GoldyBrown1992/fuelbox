@@ -89,10 +89,10 @@ export default function TrainingDayComparison() {
           </div>
         </div>
 
-        {/* Training Day */}
+        {/* Typical Meal Plan */}
         <div className="bg-white rounded-3xl shadow-xl p-6 opacity-95 relative">
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gray-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-            Training Day Cafe
+            Typical Meal Plan
           </div>
           
           <div className="text-center mb-6 pt-4">
