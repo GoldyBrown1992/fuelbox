@@ -1,48 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia'
-})
-
 export async function POST(req: NextRequest) {
   try {
+    // Check if Stripe key exists
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('STRIPE_SECRET_KEY is not set')
+      return NextResponse.json(
+        { error: 'Stripe configuration error' },
+        { status: 500 }
+      )
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-02-24.acacia'
+    })
+
     const body = await req.json()
     const { priceType, quantity = 1, fulfillment, pickupLocation } = body
 
-    // Debug logging
-    console.log('=== CHECKOUT DEBUG ===')
-    console.log('Request body:', body)
-    console.log('Price type requested:', priceType)
-    
-    // Get the appropriate price ID
     const priceId = priceType === 'subscription'
       ? process.env.NEXT_PUBLIC_STRIPE_PRICE_SUBSCRIPTION
       : process.env.NEXT_PUBLIC_STRIPE_PRICE_SINGLE
 
-    console.log('Selected price ID:', priceId)
-    console.log('Checkout mode:', priceType === 'subscription' ? 'subscription' : 'payment')
-
     if (!priceId) {
-      throw new Error(`Price ID not configured for ${priceType}`)
+      console.error(`Price ID not found for ${priceType}`)
+      return NextResponse.json(
+        { error: `Price not configured for ${priceType}` },
+        { status: 500 }
+      )
     }
 
-    // Verify the price exists in Stripe
-    try {
-      const price = await stripe.prices.retrieve(priceId)
-      console.log('Price details from Stripe:', {
-        id: price.id,
-        type: price.type,
-        recurring: price.recurring,
-        amount: price.unit_amount,
-        currency: price.currency
-      })
-    } catch (priceError) {
-      console.error('Failed to retrieve price from Stripe:', priceError)
-      throw new Error(`Invalid price ID: ${priceId}`)
-    }
-
-    // Create checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -62,21 +50,11 @@ export async function POST(req: NextRequest) {
       }
     })
 
-    console.log('Checkout session created:', session.id)
     return NextResponse.json({ url: session.url })
-    
   } catch (error: any) {
-    console.error('=== CHECKOUT ERROR ===')
-    console.error('Error message:', error.message)
-    console.error('Error type:', error.type)
-    console.error('Full error:', error)
-    
+    console.error('Checkout error:', error.message)
     return NextResponse.json(
-      { 
-        error: 'Failed to create checkout session',
-        details: error.message,
-        type: error.type
-      },
+      { error: error.message || 'Checkout failed' },
       { status: 500 }
     )
   }
