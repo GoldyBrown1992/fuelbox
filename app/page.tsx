@@ -1,3 +1,5 @@
+'use client'
+
 import Hero from '@/components/Hero'
 import ScarcityInventory from '@/components/ScarcityInventory'
 import ProductCard from '@/components/ProductCard'
