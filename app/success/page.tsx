@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { CheckCircle, Package, Truck, Clock, ArrowRight, Home } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-export default function SuccessPage() {
+// Wrap the component that uses useSearchParams
+function SuccessContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [showConfetti, setShowConfetti] = useState(true)
@@ -59,7 +60,7 @@ export default function SuccessPage() {
           </div>
 
           {/* Order Details Card */}
-          <div className="bg-white/90 backdrop-blur rounded-3xl shadow-xl p-8 mb-8">
+          <div className="bg-white bg-opacity-90 backdrop-blur rounded-3xl shadow-xl p-8 mb-8">
             <div className="border-b border-gray-200 pb-4 mb-6">
               <p className="text-sm text-gray-500 mb-1">Order Number</p>
               <p className="font-mono text-lg font-bold text-gray-900">
@@ -128,7 +129,7 @@ export default function SuccessPage() {
           </div>
 
           {/* Pro Tips */}
-          <div className="bg-white/90 backdrop-blur rounded-3xl shadow-xl p-8 mb-8">
+          <div className="bg-white bg-opacity-90 backdrop-blur rounded-3xl shadow-xl p-8 mb-8">
             <h3 className="font-bold text-gray-900 mb-4 text-lg">
               💪 Pro Tips for Maximum Gains
             </h3>
@@ -192,3 +193,24 @@ export default function SuccessPage() {
     </div>
   )
 }
+
+// Main component with Suspense boundary
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-amber-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-green-400 to-green-500 rounded-full shadow-2xl mb-6 animate-pulse">
+            <CheckCircle className="w-16 h-16 text-white" />
+          </div>
+          <p className="text-xl text-gray-600">Loading your order confirmation...</p>
+        </div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
+  )
+}
+
+// Force dynamic rendering to prevent prerender errors
+export const dynamic = 'force-dynamic'
