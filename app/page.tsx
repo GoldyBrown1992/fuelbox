@@ -1,95 +1,100 @@
 'use client'
 
 import Hero from '@/components/Hero'
-import ScarcityInventory from '@/components/ScarcityInventory'
+import BenefitsBar from '@/components/BenefitsBar'
+import AvailabilityMeter from '@/components/AvailabilityMeter'
 import ProductCard from '@/components/ProductCard'
-import NutritionComparison from '@/components/NutritionComparison'
+import TrainingDayComparison from '@/components/TrainingDayComparison'
 import BottomNav from '@/components/BottomNav'
 
 export default function Home() {
   return (
     <>
-      <main className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
-        {/* Pizza-themed background */}
+      <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+        {/* Healthy Background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-red-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-orange-300 rounded-full blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-green-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-emerald-300 rounded-full blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
         </div>
 
-        {/* Compact Hero + Scarcity in one section */}
         <div className="relative z-10">
+          {/* Benefits Bar - Right at the top */}
+          <BenefitsBar />
+          
+          {/* Hero Section */}
           <Hero />
           
-          {/* Sticky Scarcity Counter */}
-          <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-red-200">
-            <ScarcityInventory />
+          {/* Live Availability Meter - Sticky */}
+          <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b-2 border-green-200 shadow-sm">
+            <AvailabilityMeter />
           </div>
 
-          {/* Main Product Section - More Compact */}
-          <section id="product" className="container mx-auto px-4 py-6">
+          {/* Main Product Section */}
+          <section id="product" className="container mx-auto px-4 py-8">
             <ProductCard />
           </section>
 
-          {/* Nutrition Comparison */}
-          <section id="nutrition" className="container mx-auto px-4 py-6">
-            <NutritionComparison />
+          {/* Training Day Comparison */}
+          <section id="comparison" className="container mx-auto px-4 py-8">
+            <TrainingDayComparison />
           </section>
 
-          {/* Trust & CTA Section - Compact */}
+          {/* Why FuelBox Section */}
           <section className="container mx-auto px-4 py-8 mb-20 md:mb-8">
-            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {/* Trust Badges */}
-              <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-xl">
-                <h3 className="font-bold text-lg mb-4">Why Choose FuelBox?</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">🍕</span>
-                    <div>
-                      <p className="font-semibold">Pizza Flavor, Zero Guilt</p>
-                      <p className="text-sm text-gray-600">All the taste, 4x the protein</p>
-                    </div>
+            <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-8">
+              <h2 className="text-3xl font-black text-center mb-6 text-gray-900">
+                The Smart Choice for Athletes
+              </h2>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Value */}
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-3xl">💰</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">💪</span>
-                    <div>
-                      <p className="font-semibold">108g Premium Protein</p>
-                      <p className="text-sm text-gray-600">Chicken, eggs, Greek yogurt</p>
-                    </div>
+                  <h3 className="font-bold text-lg mb-2">Unbeatable Value</h3>
+                  <p className="text-gray-600 text-sm">
+                    108g protein for $20. That's less than 20¢ per gram of protein!
+                  </p>
+                </div>
+
+                {/* Convenience */}
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-3xl">⏱️</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">🚚</span>
-                    <div>
-                      <p className="font-semibold">Fresh Daily Delivery</p>
-                      <p className="text-sm text-gray-600">Never frozen, made fresh</p>
-                    </div>
+                  <h3 className="font-bold text-lg mb-2">Ready in 3 Minutes</h3>
+                  <p className="text-gray-600 text-sm">
+                    No prep, no cleanup. Just heat and fuel your gains.
+                  </p>
+                </div>
+
+                {/* Fresh */}
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-3xl">🌿</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">⚡</span>
-                    <div>
-                      <p className="font-semibold">Ready in 3 Minutes</p>
-                      <p className="text-sm text-gray-600">Microwave & enjoy</p>
-                    </div>
-                  </div>
+                  <h3 className="font-bold text-lg mb-2">Fresh Daily</h3>
+                  <p className="text-gray-600 text-sm">
+                    Made fresh every morning. Never frozen. Limited to 20 boxes.
+                  </p>
                 </div>
               </div>
 
               {/* Final CTA */}
-              <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-6 text-white shadow-xl">
-                <h3 className="text-2xl font-black mb-3">
-                  Limited Daily Supply!
-                </h3>
+              <div className="mt-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white text-center">
+                <p className="text-2xl font-black mb-3">
+                  Stop Overpaying for Under-Protein
+                </p>
                 <p className="mb-4 opacity-95">
-                  Only 20 Pizza Wraps made fresh each day. When they're gone, they're gone.
+                  Why pay $15 at Training Day for 35g protein when you can get 108g for $20?
                 </p>
                 <button 
                   onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full bg-white text-gray-900 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform shadow-lg"
+                  className="bg-white text-gray-900 px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg inline-block"
                 >
-                  Order Now - $20
+                  Order Your FuelBox Now →
                 </button>
-                <p className="text-sm mt-3 text-center opacity-90">
-                  🔥 Selling fast today
-                </p>
               </div>
             </div>
           </section>
