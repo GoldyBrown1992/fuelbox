@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, ShoppingCart, Info, User } from 'lucide-react'
+import { Home, ShoppingCart, Info, Pizza } from 'lucide-react'
 import { useState } from 'react'
 
 export default function BottomNav() {
@@ -22,14 +22,14 @@ export default function BottomNav() {
     {
       id: 'nutrition',
       label: 'Nutrition',
-      icon: <Info className="w-5 h-5" />,
-      action: () => document.querySelector('.nutrition-section')?.scrollIntoView({ behavior: 'smooth' })
+      icon: <Pizza className="w-5 h-5" />,
+      action: () => document.getElementById('nutrition')?.scrollIntoView({ behavior: 'smooth' })
     },
     {
-      id: 'account',
-      label: 'Account',
-      icon: <User className="w-5 h-5" />,
-      action: () => alert('Account features coming soon!')
+      id: 'track',
+      label: 'Track',
+      icon: <Info className="w-5 h-5" />,
+      action: () => alert('Order tracking coming soon!')
     }
   ]
 
@@ -45,7 +45,7 @@ export default function BottomNav() {
             }}
             className={`flex flex-col items-center justify-center py-3 px-2 transition-all ${
               activeTab === tab.id
-                ? 'bg-gradient-to-t from-amber-50 to-white text-amber-600'
+                ? 'bg-gradient-to-t from-red-50 to-white text-red-600'
                 : 'text-gray-500 hover:bg-gray-50'
             }`}
           >
@@ -54,7 +54,7 @@ export default function BottomNav() {
             </div>
             <span className="text-xs mt-1 font-medium">{tab.label}</span>
             {activeTab === tab.id && (
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-green-500"></div>
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-500 to-orange-500"></div>
             )}
           </button>
         ))}
