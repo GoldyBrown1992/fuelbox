@@ -195,7 +195,7 @@ export default function TrainingDayComparison() {
 
         <div className="mt-8 text-center">
           <p className="text-2xl font-black mb-4">
-            "For the price of a basic Training Day bowl + a protein shake, get our complete 108g protein meal!"
+            "Other meal plan services cannot compete with us!"
           </p>
           <button 
             onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
