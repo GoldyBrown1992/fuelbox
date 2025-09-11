@@ -43,8 +43,9 @@ export default function ProductCard() {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl mx-auto">
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-black mb-2">FuelBox Pizza Wrap</h2>
-        <p className="text-gray-600">Complete Performance Meal • Fresh Daily</p>
+        <h2 className="text-3xl font-black mb-1">FuelBox Pizza Wrap</h2>
+<p className="text-xl font-bold text-green-600 mb-2">Meal Kit</p>
+<p className="text-gray-600">Complete Performance Meal • Fresh Daily</p>
         
         <div className="grid grid-cols-4 gap-4 mt-6">
           <div className="bg-green-50 rounded-lg p-3">
