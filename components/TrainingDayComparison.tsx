@@ -62,10 +62,7 @@ export default function TrainingDayComparison() {
                 <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                 <span>Fresh Fruit Bowl</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <span>Bottled Water</span>
-              </div>
+              
             </div>
 
             {/* Stats */}
