@@ -39,9 +39,6 @@ export default function Home() {
   <ProductCard />
 </section>
 
-{/* ADD THIS NEW SECTION */}
-<CorporateSection />
-
 <section id="comparison" className="py-12 md:py-16 bg-gray-50">
   <TrainingDayComparison />
 </section>
