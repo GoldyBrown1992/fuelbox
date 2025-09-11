@@ -24,8 +24,8 @@ export default function Hero() {
           {/* Main Headline */}
           <h1 className="text-5xl md:text-7xl font-black mb-4">
             <span className="block text-white">FUELBOX</span>
-            <span className="block text-6xl md:text-8xl text-green-300 drop-shadow-lg">
-              PIZZA WRAP
+            <span className="block text-5xl md:text-7xl text-yellow-300">PIZZA WRAP</span>
+<span className="block text-2xl md:text-3xl text-white/90 mt-2">MEAL KIT</span>
             </span>
           </h1>
 
