@@ -34,6 +34,20 @@ export default function Home() {
             <ProductCard />
           </section>
 
+          import CorporateSection from '@/components/CorporateSection'
+
+// Then in your page layout, after the product section:
+<section id="product" className="py-12 md:py-16">
+  <ProductCard />
+</section>
+
+{/* ADD THIS NEW SECTION */}
+<CorporateSection />
+
+<section id="comparison" className="py-12 md:py-16 bg-gray-50">
+  <TrainingDayComparison />
+</section>
+
           {/* Training Day Comparison */}
           <section id="comparison" className="container mx-auto px-4 py-8">
             <TrainingDayComparison />
