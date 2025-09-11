@@ -28,8 +28,7 @@ export default function Hero() {
 <span className="block text-2xl md:text-3xl text-white/90 mt-2">MEAL KIT</span>
             </span>
           </h1>
-
-          {/* Hero Stats */}
+          {/* Hero Sats */}
           <div className="flex justify-center gap-8 mb-6">
             <div>
               <div className="text-5xl md:text-6xl font-black text-green-300">108g</div>
