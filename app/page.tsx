@@ -6,6 +6,7 @@ import AvailabilityMeter from '@/components/AvailabilityMeter'
 import ProductCard from '@/components/ProductCard'
 import TrainingDayComparison from '@/components/TrainingDayComparison'
 import BottomNav from '@/components/BottomNav'
+import CorporateSection from '@/components/CorporateSection'
 
 export default function Home() {
   return (
