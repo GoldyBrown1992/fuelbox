@@ -34,15 +34,6 @@ export default function Home() {
             <ProductCard />
           </section>
 
-// Then in your page layout, after the product section:
-<section id="product" className="py-12 md:py-16">
-  <ProductCard />
-</section>
-
-<section id="comparison" className="py-12 md:py-16 bg-gray-50">
-  <TrainingDayComparison />
-</section>
-
           {/* Training Day Comparison */}
           <section id="comparison" className="container mx-auto px-4 py-8">
             <TrainingDayComparison />
@@ -96,7 +87,7 @@ export default function Home() {
                   Stop Overpaying for Less Protein
                 </p>
                 <p className="mb-4 opacity-95">
-                  Why pay $15 for 35g protein when you can get 108g for $20?
+                  Why pay $15 for 35g protein when you can get 100g for $20?
                 </p>
                 <button 
                   onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
