@@ -25,13 +25,13 @@ export default function Hero() {
           <h1 className="text-5xl md:text-7xl font-black mb-4">
             <span className="block text-white">FUELBOX</span>
             <span className="block text-5xl md:text-7xl text-yellow-300">PIZZA WRAP</span>
-<span className="block text-2xl md:text-3xl text-white/90 mt-2">MEAL KIT</span>
-            </span>
+            <span className="block text-2xl md:text-3xl text-white/90 mt-2">MEAL KIT</span>
           </h1>
-          {/* Hero Sats */}
+
+          {/* Hero Stats */}
           <div className="flex justify-center gap-8 mb-6">
             <div>
-              <div className="text-5xl md:text-6xl font-black text-green-300">108g</div>
+              <div className="text-5xl md:text-6xl font-black text-green-300">100g</div>
               <div className="text-sm font-semibold uppercase tracking-wider">Protein</div>
             </div>
             <div className="border-l-2 border-white/30"></div>
@@ -43,7 +43,7 @@ export default function Hero() {
 
           {/* Value Proposition */}
           <p className="text-xl md:text-2xl mb-8 text-white/95 font-semibold max-w-3xl mx-auto">
-            3X More Protein Than our competitors. Better Price. Better Fuel.
+            3X More Protein Than Our Competitors. Better Price. Better Fuel.
           </p>
 
           {/* Quick Benefits */}
@@ -62,7 +62,7 @@ export default function Hero() {
             </div>
             <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-full flex items-center gap-2">
               <span className="text-green-300">✓</span>
-              <span className="text-sm font-medium">1,085 Calories</span>
+              <span className="text-sm font-medium">1,000 Calories</span>
             </div>
           </div>
 
