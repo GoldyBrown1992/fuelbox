@@ -18,7 +18,8 @@ export default function TrainingDayComparison() {
           </div>
           
           <div className="text-center mb-6 pt-4">
-            <h3 className="text-2xl font-black text-gray-900 mb-2">FuelBox Pizza Wrap</h3>
+            <h3 className="text-2xl font-black text-gray-900 mb-1">FuelBox Pizza Wrap</h3>
+<p className="text-lg font-semibold text-green-600 mb-2">Meal Kit</p>
             <p className="text-gray-600">Complete Performance Meal</p>
           </div>
 
