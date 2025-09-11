@@ -34,8 +34,6 @@ export default function Home() {
             <ProductCard />
           </section>
 
-          import CorporateSection from '@/components/CorporateSection'
-
 // Then in your page layout, after the product section:
 <section id="product" className="py-12 md:py-16">
   <ProductCard />
