@@ -48,4 +48,19 @@ export default function MenuToggle({ activeMenu, setActiveMenu }: MenuToggleProp
             <Moon className="w-5 h-5" />
             Midnight Box
             {isNightTime && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                OPEN NOW
+              </span>
+            )}
+          </button>
+        </div>
+
+        {activeMenu === 'midnight' && (
+          <div className="hidden md:block text-sm font-semibold text-gray-700">
+            🌙 11 PM - 3 AM • FREE DELIVERY ALL NIGHT
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
