@@ -7,7 +7,7 @@ const midnightItems = [
   {
     id: 'midnight-box',
     stripeProductId: 'prod_T3ngKfvtEiOJ6m',
-    stripePriceId: 'price_1S7g5AHHRq5TjW22a91zc51',
+    stripePriceId: 'price_1S7g5AHHRq5TjW22st91zcS1',
     name: 'Midnight Box',
     price: 30,
     description: 'XXL loaded chicken wrap glazed in signature sauce, golden fries, wings (1/2 lb), 2 tacos, drink',
@@ -17,7 +17,7 @@ const midnightItems = [
   {
     id: 'double-midnight',
     stripeProductId: 'prod_T3npC86D5kFkb3',
-    stripePriceId: 'price_1S7gDPHHRq5TjW22bswkLYkc',
+    stripePriceId: 'price_1S7gDPHHRq5TjW22bswkLYsc',
     name: 'Double Midnight Box',
     price: 55,
     originalPrice: 60,
