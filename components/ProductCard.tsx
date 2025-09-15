@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Loader2, MapPin } from 'lucide-react'
 
 const drinkOptions = ['Coke', 'Pepsi', 'Sprite', 'Root Beer', 'Dr Pepper', 'Cream Soda']
@@ -47,6 +47,38 @@ export default function ProductCard() {
   const [locationType, setLocationType] = useState<'sfu' | 'other' | ''>('')
   const [locationDetails, setLocationDetails] = useState('')
   const [otherAddress, setOtherAddress] = useState('')
+  
+  const addressInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (locationType === 'other' && addressInputRef.current && typeof window !== 'undefined' && window.google) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          componentRestrictions: { country: 'ca' },
+          fields: ['formatted_address'],
+          types: ['address'],
+          bounds: {
+            north: 49.2057,
+            south: 49.0583,
+            east: -122.5937,
+            west: -122.8489
+          } // Surrey area bounds
+        }
+      )
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace()
+        if (place.formatted_address) {
+          setOtherAddress(place.formatted_address)
+        }
+      })
+
+      return () => {
+        window.google.maps.event.clearInstanceListeners(autocomplete)
+      }
+    }
+  }, [locationType])
 
   const handleCheckout = async (item: any) => {
     const quantity = quantities[item.id] || 1
@@ -157,20 +189,13 @@ export default function ProductCard() {
         {locationType === 'other' && (
           <div>
             <input
+              ref={addressInputRef}
               type="text"
-              placeholder="Enter delivery address"
+              placeholder="Start typing your address..."
               value={otherAddress}
               onChange={(e) => setOtherAddress(e.target.value)}
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
-              list="address-suggestions"
             />
-            <datalist id="address-suggestions">
-              <option value="Surrey Central Station, Surrey, BC" />
-              <option value="Surrey Central Mall, Surrey, BC" />
-              <option value="Holland Park, Surrey, BC" />
-              <option value="King George Station, Surrey, BC" />
-              <option value="Gateway Station, Surrey, BC" />
-            </datalist>
             <p className="text-gray-600 text-sm mt-2">
               {otherAddress.toLowerCase().includes('surrey central') 
                 ? '✓ Free delivery' 
