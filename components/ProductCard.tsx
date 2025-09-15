@@ -47,6 +47,8 @@ export default function ProductCard() {
   const [locationType, setLocationType] = useState<'sfu' | 'other' | ''>('')
   const [locationDetails, setLocationDetails] = useState('')
   const [otherAddress, setOtherAddress] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [deliveryInstructions, setDeliveryInstructions] = useState('')
   
   const addressInputRef = useRef<HTMLInputElement>(null)
 
@@ -63,7 +65,7 @@ export default function ProductCard() {
             south: 49.0583,
             east: -122.5937,
             west: -122.8489
-          } // Surrey area bounds
+          }
         }
       )
 
@@ -97,6 +99,17 @@ export default function ProductCard() {
       alert('Please enter delivery address')
       return
     }
+
+    if (!phoneNumber) {
+      alert('Please enter your phone number')
+      return
+    }
+    
+    const phoneRegex = /^[\d\s\-\(\)]+$/
+    if (!phoneRegex.test(phoneNumber) || phoneNumber.replace(/\D/g, '').length < 10) {
+      alert('Please enter a valid phone number')
+      return
+    }
     
     if (item.drinks > 0 && (!drinkSelections[item.id] || drinkSelections[item.id].length !== item.drinks)) {
       setShowDrinkModal(item.id)
@@ -120,7 +133,9 @@ export default function ProductCard() {
           productName: item.name,
           fulfillment: 'delivery',
           drinks: drinkSelections[item.id] || [],
-          deliveryAddress: deliveryAddress
+          deliveryAddress: deliveryAddress,
+          phoneNumber: phoneNumber,
+          deliveryInstructions: deliveryInstructions
         })
       })
 
@@ -141,7 +156,7 @@ export default function ProductCard() {
       <div className="max-w-4xl mx-auto mb-6 bg-white rounded-xl shadow-md p-6">
         <h3 className="font-bold text-lg mb-3 flex items-center">
           <MapPin className="w-5 h-5 mr-2 text-red-600" />
-          Delivery Location
+          Delivery Information
         </h3>
         
         <div className="flex gap-4 mb-4">
@@ -201,6 +216,37 @@ export default function ProductCard() {
                 ? '✓ Free delivery' 
                 : '📍 $5-10 delivery fee may apply'}
             </p>
+          </div>
+        )}
+
+        {/* Phone and Instructions */}
+        {locationType && (
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">
+                Phone Number *
+              </label>
+              <input
+                type="tel"
+                placeholder="(604) 123-4567"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">
+                Delivery Instructions (optional)
+              </label>
+              <textarea
+                placeholder="Buzzer code, meet in lobby, leave at door, etc."
+                value={deliveryInstructions}
+                onChange={(e) => setDeliveryInstructions(e.target.value)}
+                rows={2}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 resize-none"
+              />
+            </div>
           </div>
         )}
       </div>
