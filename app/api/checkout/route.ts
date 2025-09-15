@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   console.log('=== CHECKOUT API START ===')
   
   try {
-    // Check environment variables
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('ERROR: STRIPE_SECRET_KEY is not set!')
       return NextResponse.json(
@@ -59,3 +58,48 @@ export async function POST(req: NextRequest) {
       : process.env.NEXT_PUBLIC_STRIPE_PRICE_SINGLE
 
     console.log('Price type:', priceType)
+    console.log('Selected price ID:', regularPriceId)
+
+    if (!regularPriceId) {
+      console.error(`ERROR: No price ID found for ${priceType}`)
+      return NextResponse.json(
+        { error: `Price not configured for ${priceType}` },
+        { status: 500 }
+      )
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: regularPriceId,
+          quantity: priceType === 'subscription' ? 1 : quantity,
+        },
+      ],
+      mode: priceType === 'subscription' ? 'subscription' : 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+      metadata: {
+        priceType,
+        quantity: quantity.toString(),
+        fulfillment,
+        pickupLocation: pickupLocation || 'N/A',
+      }
+    })
+
+    console.log('Session created successfully:', session.id)
+    return NextResponse.json({ url: session.url })
+
+  } catch (error: any) {
+    console.error('=== STRIPE ERROR ===')
+    console.error('Error message:', error.message)
+    
+    return NextResponse.json(
+      { 
+        error: 'Checkout failed',
+        details: error.message,
+      },
+      { status: 500 }
+    )
+  }
+}
