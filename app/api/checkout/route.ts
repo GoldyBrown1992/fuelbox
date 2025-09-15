@@ -1,3 +1,6 @@
+import { NextRequest, NextResponse } from 'next/server'
+import Stripe from 'stripe'
+
 export async function POST(req: NextRequest) {
   console.log('=== CHECKOUT API START ===')
   
@@ -14,7 +17,7 @@ export async function POST(req: NextRequest) {
       }
       
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: '2024-11-20.acacia'
+        apiVersion: '2025-02-24.acacia'  // Change back to 2025
       })
       
       const session = await stripe.checkout.sessions.create({
