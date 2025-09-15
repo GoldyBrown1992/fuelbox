@@ -5,16 +5,6 @@ import { Loader2, MapPin } from 'lucide-react'
 
 const drinkOptions = ['Coke', 'Pepsi', 'Sprite', 'Root Beer', 'Dr Pepper', 'Cream Soda']
 
-const sfuLocations = [
-  'SFU Surrey - Podium Building',
-  'SFU Surrey - Galleria Building', 
-  'SFU Surrey - SRYC Building',
-  'SFU Surrey - Library',
-  'Surrey Central Station',
-  'Surrey Central Mall',
-  'Other Location'
-]
-
 const menuItems = [
   {
     id: 'classic-box',
@@ -54,14 +44,25 @@ export default function ProductCard() {
   const [quantities, setQuantities] = useState<{[key: string]: number}>({})
   const [drinkSelections, setDrinkSelections] = useState<{[key: string]: string[]}>({})
   const [showDrinkModal, setShowDrinkModal] = useState<string | null>(null)
-  const [selectedLocation, setSelectedLocation] = useState('')
-  const [roomDetails, setRoomDetails] = useState('')
+  const [locationType, setLocationType] = useState<'sfu' | 'other' | ''>('')
+  const [locationDetails, setLocationDetails] = useState('')
+  const [otherAddress, setOtherAddress] = useState('')
 
   const handleCheckout = async (item: any) => {
     const quantity = quantities[item.id] || 1
     
-    if (!selectedLocation) {
+    if (!locationType) {
       alert('Please select a delivery location')
+      return
+    }
+    
+    if (locationType === 'sfu' && !locationDetails) {
+      alert('Please enter building/room details for SFU delivery')
+      return
+    }
+    
+    if (locationType === 'other' && !otherAddress) {
+      alert('Please enter delivery address')
       return
     }
     
@@ -71,6 +72,10 @@ export default function ProductCard() {
     }
 
     setLoading(item.id)
+    
+    const deliveryAddress = locationType === 'sfu' 
+      ? `SFU Surrey - ${locationDetails}`
+      : otherAddress
     
     try {
       const response = await fetch('/api/checkout', {
@@ -83,8 +88,7 @@ export default function ProductCard() {
           productName: item.name,
           fulfillment: 'delivery',
           drinks: drinkSelections[item.id] || [],
-          location: selectedLocation,
-          roomDetails: roomDetails
+          deliveryAddress: deliveryAddress
         })
       })
 
@@ -108,42 +112,78 @@ export default function ProductCard() {
           Delivery Location
         </h3>
         
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => {
+              setLocationType('sfu')
+              setOtherAddress('')
+            }}
+            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+              locationType === 'sfu' 
+                ? 'bg-red-600 text-white' 
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            SFU Surrey
+          </button>
+          <button
+            onClick={() => {
+              setLocationType('other')
+              setLocationDetails('')
+            }}
+            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+              locationType === 'other' 
+                ? 'bg-red-600 text-white' 
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            Other Location
+          </button>
+        </div>
+
+        {locationType === 'sfu' && (
           <div>
-            <label className="text-sm font-semibold text-gray-600 mb-2 block">Select Location:</label>
-            <select 
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            >
-              <option value="">Choose location...</option>
-              {sfuLocations.map(location => (
-                <option key={location} value={location}>{location}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="text-sm font-semibold text-gray-600 mb-2 block">Room/Floor Details:</label>
             <input
               type="text"
-              placeholder="e.g., Room 2400, 2nd floor, near elevators"
-              value={roomDetails}
-              onChange={(e) => setRoomDetails(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              placeholder="Enter building, room number, floor (e.g., Podium 2400, 2nd floor)"
+              value={locationDetails}
+              onChange={(e) => setLocationDetails(e.target.value)}
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
             />
+            <p className="text-green-600 text-sm mt-2">✓ Free delivery to SFU Surrey</p>
           </div>
-        </div>
-        
-        {selectedLocation && selectedLocation.includes('SFU') && (
-          <p className="text-green-600 text-sm mt-2">✓ Free delivery to {selectedLocation}</p>
+        )}
+
+        {locationType === 'other' && (
+          <div>
+            <input
+              type="text"
+              placeholder="Enter delivery address"
+              value={otherAddress}
+              onChange={(e) => setOtherAddress(e.target.value)}
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+              list="address-suggestions"
+            />
+            <datalist id="address-suggestions">
+              <option value="Surrey Central Station, Surrey, BC" />
+              <option value="Surrey Central Mall, Surrey, BC" />
+              <option value="Holland Park, Surrey, BC" />
+              <option value="King George Station, Surrey, BC" />
+              <option value="Gateway Station, Surrey, BC" />
+            </datalist>
+            <p className="text-gray-600 text-sm mt-2">
+              {otherAddress.toLowerCase().includes('surrey central') 
+                ? '✓ Free delivery' 
+                : '📍 $5-10 delivery fee may apply'}
+            </p>
+          </div>
         )}
       </div>
 
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery to SFU Surrey & Surrey Central • $5-10 delivery outside Surrey
+          🚚 FREE Delivery to SFU Surrey & Surrey Central • $5-10 delivery outside Surrey Central
         </p>
       </div>
 
@@ -200,7 +240,7 @@ export default function ProductCard() {
 
               <button
                 onClick={() => handleCheckout(item)}
-                disabled={loading === item.id || !selectedLocation}
+                disabled={loading === item.id || !locationType}
                 className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
               >
                 {loading === item.id ? (
