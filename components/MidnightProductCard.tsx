@@ -6,34 +6,34 @@ import { Loader2, Flame, Clock, TrendingUp } from 'lucide-react'
 const midnightItems = [
   {
     id: 'midnight-box',
+    stripeProductId: 'prod_T3ngKfvtEiOJ6m',
+    stripePriceId: 'price_1S7g5AHHRq5TjW22a91zc51',
     name: 'Midnight Box',
     price: 30,
     description: 'XXL loaded chicken wrap glazed in signature sauce, golden fries, wings (1/2 lb), 2 tacos, drink',
-    badge: '🔥 432 ordered tonight',
+    badge: '🔥 Most Popular Tonight',
     popular: true,
-    image: '/images/midnight-box.jpg', // Add your images to public/images/
-    // Or use placeholder: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400'
   },
   {
     id: 'double-midnight',
+    stripeProductId: 'prod_T3npC86D5kFkb3',
+    stripePriceId: 'price_1S7gDPHHRq5TjW22bswkLYkc',
     name: 'Double Midnight Box',
     price: 55,
     originalPrice: 60,
-    description: '2x Midnight Boxes - perfect for 2 people or 1 very hungry person',
+    description: '2x Midnight Boxes - perfect for sharing or one hungry night owl',
     badge: 'Save $5',
-    image: '/images/double-midnight.jpg',
-    // Or: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400'
   },
   {
-    id: 'party-pack',
-    name: 'Party Pack (10 people)',
+    id: 'party-Box',
+    stripeProductId: 'prod_T3npOaPHtDjdAV',
+    stripePriceId: 'price_1S7gDoHHRq5TjW229HOABSaC',
+    name: 'Party Box',
     price: 199,
     originalPrice: 250,
-    description: '5 XXL wraps, 2 lbs wings, large fries, 10 drinks - feeds a whole party',
+    description: '5 XXL wraps, 2 lbs wings, large fries, 10 drinks - feeds 10 people',
     badge: 'BEST VALUE - Save $51',
     popular: true,
-    image: '/images/party-pack.jpg',
-    // Or: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400'
   }
 ]
 
@@ -53,15 +53,16 @@ export default function MidnightProductCard() {
     const quantity = quantities[item.id] || 1
     
     try {
+      // Direct Stripe checkout for midnight items
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceType: 'midnight',
-          itemName: item.name,
-          price: item.price * quantity,
+          priceId: item.stripePriceId,
           quantity: quantity,
           fulfillment: 'delivery',
+          productName: item.name
         })
       })
 
@@ -71,7 +72,6 @@ export default function MidnightProductCard() {
       }
     } catch (error) {
       console.error('Checkout error:', error)
-      alert(`Order placed: ${quantity}x ${item.name} - Total: $${item.price * quantity}`)
     } finally {
       setLoading(null)
     }
@@ -84,15 +84,11 @@ export default function MidnightProductCard() {
         <h2 className="text-3xl font-black mb-2">
           🌙 MIDNIGHT BOX MENU 🌙
         </h2>
-        <p className="text-lg opacity-90">11 PM - 3 AM • FREE DELIVERY • MINIMUM ORDER $30</p>
+        <p className="text-lg opacity-90">11 PM - 3 AM • FREE DELIVERY • $30 MINIMUM</p>
         <div className="mt-4 flex justify-center gap-4 flex-wrap">
           <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-full">
             <Clock className="w-4 h-4 inline mr-2" />
             Open Till 3 AM
-          </div>
-          <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-full">
-            <TrendingUp className="w-4 h-4 inline mr-2" />
-            1,247 Orders Tonight
           </div>
           <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-full">
             🚚 Free Delivery on All Orders
@@ -100,7 +96,7 @@ export default function MidnightProductCard() {
         </div>
       </div>
 
-      {/* Menu Grid - Now with images */}
+      {/* Menu Grid */}
       <div className="grid md:grid-cols-3 gap-8">
         {midnightItems.map((item) => (
           <div 
@@ -118,24 +114,15 @@ export default function MidnightProductCard() {
               </div>
             )}
 
-            {/* Food Image */}
-            <div className="relative h-48 bg-gray-100">
-              {item.image ? (
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                // Fallback to large emoji if no image
-                <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-black">
-                  <span className="text-7xl">
-                    {item.id === 'midnight-box' && '🌮'}
-                    {item.id === 'double-midnight' && '🍔'}
-                    {item.id === 'party-pack' && '🎉'}
-                  </span>
-                </div>
-              )}
+            {/* Food Image Placeholder */}
+            <div className="relative h-48 bg-gradient-to-br from-gray-800 to-black">
+              <div className="flex items-center justify-center h-full">
+                <span className="text-7xl">
+                  {item.id === 'midnight-box' && '🌮'}
+                  {item.id === 'double-midnight' && '🍔'}
+                  {item.id === 'party-Box' && '🎉'}
+                </span>
+              </div>
               {item.popular && (
                 <div className="absolute top-4 right-4">
                   <Flame className="w-8 h-8 text-red-500 drop-shadow-lg" />
@@ -193,10 +180,10 @@ export default function MidnightProductCard() {
         ))}
       </div>
 
-      {/* Minimum Order Notice */}
+      {/* Info Section */}
       <div className="mt-8 bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4 text-center">
         <p className="text-lg font-bold text-gray-900">
-          📦 Minimum Order: $30 • Free Delivery All Night
+          📦 $30 Minimum Order • Free Delivery 11 PM - 3 AM
         </p>
       </div>
     </div>
