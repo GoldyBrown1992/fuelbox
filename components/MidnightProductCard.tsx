@@ -28,7 +28,7 @@ const midnightItems = [
     id: 'party-Box',
     stripeProductId: 'prod_T3npOaPHtDjdAV',
     stripePriceId: 'price_1S7gDoHHRq5TjW229HOABSaC',
-    name: 'Party Box',
+    name: 'party box',
     price: 199,
     originalPrice: 250,
     description: '5 XXL wraps, 2 lbs wings, large fries, 10 drinks - feeds 10 people',
