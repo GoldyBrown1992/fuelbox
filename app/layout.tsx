@@ -1,21 +1,22 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'FuelBox Pizza Wrap Meal - 108g Protein | Pizza Without The Guilt',
-  description: 'Get 100g of premium protein. Complete meal with a gourmet wrap, 3 eggs, Greek yogurt and fresh fruit. Only 20 boxes available daily. Order now!',
-  keywords: 'pizza wrap, high protein meals, 108g protein, meal delivery, healthy pizza, athlete nutrition, performance meals',
+  title: "Surrey's Only 24-7 Kitchen | Hot Wraps, Tacos & Party Boxes",
+  description: 'Fresh grilled wraps, tacos, loaded fries delivered 24/7. Free delivery to SFU Surrey. Classic Box $30, Family Box $55, Party Box $199.',
+  keywords: 'surrey food delivery, 24 hour delivery, sfu surrey delivery, wraps, tacos, loaded fries, party catering, late night food',
   metadataBase: new URL('https://fuelbox.netlify.app'),
   openGraph: {
-    title: 'FuelBox Pizza Wrap - 100g Protein',
-    description: 'Pizza without the guilt. 108g protein, complete nutrition, fresh daily.',
+    title: "Surrey's Only 24-7 Kitchen",
+    description: 'Hot wraps, tacos & loaded fries delivered all day. Free delivery to SFU Surrey.',
     images: ['/og-image.jpg'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FuelBox Pizza Wrap - 100g Protein',
-    description: 'Pizza flavor with 4x the protein. Limited to 20 daily.',
+    title: "Surrey's Only 24-7 Kitchen",
+    description: 'Fresh grilled food delivered 24/7. Free SFU Surrey delivery.',
   },
   robots: {
     index: true,
@@ -41,6 +42,10 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )
