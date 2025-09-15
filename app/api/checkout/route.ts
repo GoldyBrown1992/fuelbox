@@ -66,9 +66,6 @@ export async function POST(req: NextRequest) {
           productName: productName || 'Unknown',
           quantity: String(quantity),
         },
-        shipping_address_collection: {
-          allowed_countries: ['CA'],
-        },
       })
 
       console.log('Midnight session created:', session.id)
