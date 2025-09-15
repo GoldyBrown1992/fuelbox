@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       }
       
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: '2025-02-24.acacia'
+        apiVersion: '2024-11-20.acacia'
       })
       
       const session = await stripe.checkout.sessions.create({
