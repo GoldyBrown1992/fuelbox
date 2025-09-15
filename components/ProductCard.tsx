@@ -48,7 +48,6 @@ export default function ProductCard() {
   const handleCheckout = async (item: any) => {
     const quantity = quantities[item.id] || 1
     
-    // Check if drinks need to be selected for party box
     if (item.drinks > 0 && (!drinkSelections[item.id] || drinkSelections[item.id].length !== item.drinks)) {
       setShowDrinkModal(item.id)
       return
@@ -82,15 +81,13 @@ export default function ProductCard() {
   }
 
   return (
-    <div>
-      {/* Info Banner */}
+    <>
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
           🚚 FREE Delivery to SFU Surrey & Surrey Central • $5-10 delivery outside Surrey
         </p>
       </div>
 
-      {/* Menu Grid */}
       <div className="grid md:grid-cols-3 gap-8">
         {menuItems.map((item) => (
           <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative">
@@ -108,4 +105,97 @@ export default function ProductCard() {
 
               <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
 
-              {/* Quanti
+              <div className="mb-4">
+                <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
+                <div className="flex gap-2 justify-center">
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <button
+                      key={num}
+                      onClick={() => setQuantities({...quantities, [item.id]: num})}
+                      className={`w-12 h-12 rounded-lg font-bold transition-all ${
+                        (quantities[item.id] || 1) === num 
+                          ? 'bg-red-600 text-white' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {item.drinks > 0 && (
+                <button
+                  onClick={() => setShowDrinkModal(item.id)}
+                  className="w-full mb-3 py-2 bg-gray-100 rounded-lg text-sm font-semibold hover:bg-gray-200"
+                >
+                  Select 2L Drinks (2)
+                  {drinkSelections[item.id]?.length === 2 && 
+                    <span className="text-green-600"> ✓</span>
+                  }
+                </button>
+              )}
+
+              <button
+                onClick={() => handleCheckout(item)}
+                disabled={loading === item.id}
+                className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
+              >
+                {loading === item.id ? (
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                ) : (
+                  `Order Now - $${item.price * (quantities[item.id] || 1)}`
+                )}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {showDrinkModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-black mb-4">Select Two 2L Drinks</h3>
+            
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {drinkOptions.map(drink => (
+                <button
+                  key={drink}
+                  onClick={() => {
+                    const current = drinkSelections[showDrinkModal] || []
+                    if (current.includes(drink)) {
+                      setDrinkSelections({
+                        ...drinkSelections,
+                        [showDrinkModal]: current.filter(d => d !== drink)
+                      })
+                    } else if (current.length < 2) {
+                      setDrinkSelections({
+                        ...drinkSelections,
+                        [showDrinkModal]: [...current, drink]
+                      })
+                    }
+                  }}
+                  className={`p-3 rounded-lg font-semibold ${
+                    drinkSelections[showDrinkModal]?.includes(drink)
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  {drink}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowDrinkModal(null)}
+              disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
+              className="w-full py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
+            >
+              Confirm Selection
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
