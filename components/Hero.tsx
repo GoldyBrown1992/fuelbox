@@ -7,11 +7,11 @@ export default function Hero() {
     <section className="bg-gradient-to-br from-red-600 via-red-500 to-orange-500">
       <div className="container mx-auto px-4 py-16 md:py-20 text-center text-white">
         <h1 className="text-5xl md:text-7xl font-black mb-4">
-          SURREY'S KITCHEN
+          SURREY'S ONLY 24-7 KITCHEN
         </h1>
         
         <p className="text-xl md:text-2xl mb-8 font-semibold max-w-3xl mx-auto">
-          Hot wraps, tacos, fries, and party boxes delivered all day
+          Hot and toasty wraps, crispy tacos, loade fries and party boxes delivered all day
         </p>
 
         <div className="flex justify-center gap-6 mb-8">
