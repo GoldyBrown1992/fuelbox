@@ -11,7 +11,7 @@ export default function Hero() {
         </h1>
         
         <p className="text-xl md:text-2xl mb-8 font-semibold max-w-3xl mx-auto">
-          Hot and toasty wraps, crispy tacos, loade fries and party boxes delivered all day
+          Hot and toasty wraps, crispy tacos, loaded fries and party boxes delivered all day
         </p>
 
         <div className="flex justify-center gap-6 mb-8">
