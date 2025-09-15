@@ -1,9 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, MapPin } from 'lucide-react'
 
 const drinkOptions = ['Coke', 'Pepsi', 'Sprite', 'Root Beer', 'Dr Pepper', 'Cream Soda']
+
+const sfuLocations = [
+  'SFU Surrey - Podium Building',
+  'SFU Surrey - Galleria Building', 
+  'SFU Surrey - SRYC Building',
+  'SFU Surrey - Library',
+  'Surrey Central Station',
+  'Surrey Central Mall',
+  'Other Location'
+]
 
 const menuItems = [
   {
@@ -44,9 +54,16 @@ export default function ProductCard() {
   const [quantities, setQuantities] = useState<{[key: string]: number}>({})
   const [drinkSelections, setDrinkSelections] = useState<{[key: string]: string[]}>({})
   const [showDrinkModal, setShowDrinkModal] = useState<string | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState('')
+  const [roomDetails, setRoomDetails] = useState('')
 
   const handleCheckout = async (item: any) => {
     const quantity = quantities[item.id] || 1
+    
+    if (!selectedLocation) {
+      alert('Please select a delivery location')
+      return
+    }
     
     if (item.drinks > 0 && (!drinkSelections[item.id] || drinkSelections[item.id].length !== item.drinks)) {
       setShowDrinkModal(item.id)
@@ -65,7 +82,9 @@ export default function ProductCard() {
           quantity: quantity,
           productName: item.name,
           fulfillment: 'delivery',
-          drinks: drinkSelections[item.id] || []
+          drinks: drinkSelections[item.id] || [],
+          location: selectedLocation,
+          roomDetails: roomDetails
         })
       })
 
@@ -82,28 +101,71 @@ export default function ProductCard() {
 
   return (
     <>
+      {/* Location Selection */}
+      <div className="max-w-4xl mx-auto mb-6 bg-white rounded-xl shadow-md p-6">
+        <h3 className="font-bold text-lg mb-3 flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-red-600" />
+          Delivery Location
+        </h3>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-semibold text-gray-600 mb-2 block">Select Location:</label>
+            <select 
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              <option value="">Choose location...</option>
+              {sfuLocations.map(location => (
+                <option key={location} value={location}>{location}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="text-sm font-semibold text-gray-600 mb-2 block">Room/Floor Details:</label>
+            <input
+              type="text"
+              placeholder="e.g., Room 2400, 2nd floor, near elevators"
+              value={roomDetails}
+              onChange={(e) => setRoomDetails(e.target.value)}
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+        
+        {selectedLocation && selectedLocation.includes('SFU') && (
+          <p className="text-green-600 text-sm mt-2">✓ Free delivery to {selectedLocation}</p>
+        )}
+      </div>
+
+      {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
           🚚 FREE Delivery to SFU Surrey & Surrey Central • $5-10 delivery outside Surrey
         </p>
       </div>
 
+      {/* Menu Grid */}
       <div className="grid md:grid-cols-3 gap-8">
         {menuItems.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative">
+          <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative flex flex-col">
             {item.badge && (
               <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                 {item.badge}
               </div>
             )}
 
-            <div className="p-8 text-center">
+            <div className="p-8 text-center flex flex-col flex-grow">
               <div className="text-7xl mb-4">{item.icon}</div>
               <h3 className="text-2xl font-black mb-2">{item.name}</h3>
               <p className="text-gray-600 mb-2">{item.description}</p>
               <p className="text-sm text-gray-500 mb-4">Serves {item.servings}</p>
 
               <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
+
+              <div className="flex-grow"></div>
 
               <div className="mb-4">
                 <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
@@ -138,7 +200,7 @@ export default function ProductCard() {
 
               <button
                 onClick={() => handleCheckout(item)}
-                disabled={loading === item.id}
+                disabled={loading === item.id || !selectedLocation}
                 className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
               >
                 {loading === item.id ? (
@@ -152,32 +214,45 @@ export default function ProductCard() {
         ))}
       </div>
 
+      {/* Drink Modal */}
       {showDrinkModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
             <h3 className="text-xl font-black mb-4">Select Two 2L Drinks</h3>
+            <p className="text-sm text-gray-600 mb-4">You can select the same drink twice</p>
             
+            <div className="mb-4 p-3 bg-gray-100 rounded-lg">
+              <p className="text-sm font-semibold mb-1">Selected:</p>
+              {drinkSelections[showDrinkModal]?.length > 0 ? (
+                <div className="flex gap-2 flex-wrap">
+                  {drinkSelections[showDrinkModal].map((drink, idx) => (
+                    <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
+                      {drink}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">None selected</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2 mb-4">
               {drinkOptions.map(drink => (
                 <button
                   key={drink}
                   onClick={() => {
                     const current = drinkSelections[showDrinkModal] || []
-                    if (current.includes(drink)) {
-                      setDrinkSelections({
-                        ...drinkSelections,
-                        [showDrinkModal]: current.filter(d => d !== drink)
-                      })
-                    } else if (current.length < 2) {
+                    if (current.length < 2) {
                       setDrinkSelections({
                         ...drinkSelections,
                         [showDrinkModal]: [...current, drink]
                       })
                     }
                   }}
+                  disabled={(drinkSelections[showDrinkModal]?.length || 0) >= 2}
                   className={`p-3 rounded-lg font-semibold ${
-                    drinkSelections[showDrinkModal]?.includes(drink)
-                      ? 'bg-red-600 text-white'
+                    (drinkSelections[showDrinkModal]?.length || 0) >= 2
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                 >
@@ -186,13 +261,26 @@ export default function ProductCard() {
               ))}
             </div>
 
-            <button
-              onClick={() => setShowDrinkModal(null)}
-              disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
-              className="w-full py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setDrinkSelections({
+                    ...drinkSelections,
+                    [showDrinkModal!]: []
+                  })
+                }}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setShowDrinkModal(null)}
+                disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
+                className="flex-1 py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         </div>
       )}
