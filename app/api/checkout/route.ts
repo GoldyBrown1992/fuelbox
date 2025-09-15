@@ -20,19 +20,50 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json()
     console.log('Request body:', body)
+    
+    const { priceType, quantity = 1, fulfillment, pickupLocation, priceId, productName } = body
 
-    const { priceType, quantity = 1, fulfillment, pickupLocation } = body
+    // Handle Midnight Box items
+    if (priceType === 'midnight') {
+      console.log('Processing Midnight Box order:', productName)
+      console.log('Using price ID:', priceId)
+      
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId, // Direct price ID from the midnight item
+            quantity: quantity,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+        metadata: {
+          orderType: 'midnight',
+          productName: productName,
+          quantity: quantity.toString(),
+          fulfillment: 'delivery', // Always delivery for midnight
+        },
+        shipping_address_collection: {
+          allowed_countries: ['CA'],
+        },
+      })
+      
+      console.log('Midnight session created:', session.id)
+      return NextResponse.json({ url: session.url })
+    }
 
-    // Get price ID
-    const priceId = priceType === 'subscription'
+    // Handle regular FuelBox items (existing code)
+    const regularPriceId = priceType === 'subscription'
       ? process.env.NEXT_PUBLIC_STRIPE_PRICE_SUBSCRIPTION
       : process.env.NEXT_PUBLIC_STRIPE_PRICE_SINGLE
 
     console.log('Price type:', priceType)
-    console.log('Selected price ID:', priceId)
+    console.log('Selected price ID:', regularPriceId)
     console.log('Checkout mode:', priceType === 'subscription' ? 'subscription' : 'payment')
 
-    if (!priceId) {
+    if (!regularPriceId) {
       console.error(`ERROR: No price ID found for ${priceType}`)
       console.error('NEXT_PUBLIC_STRIPE_PRICE_SUBSCRIPTION:', process.env.NEXT_PUBLIC_STRIPE_PRICE_SUBSCRIPTION)
       console.error('NEXT_PUBLIC_STRIPE_PRICE_SINGLE:', process.env.NEXT_PUBLIC_STRIPE_PRICE_SINGLE)
@@ -42,12 +73,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create Stripe session
+    // Create Stripe session for regular items
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price: regularPriceId,
           quantity: priceType === 'subscription' ? 1 : quantity,
         },
       ],
