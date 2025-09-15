@@ -8,7 +8,7 @@ const drinkOptions = ['Coke', 'Pepsi', 'Sprite', 'Root Beer', 'Dr Pepper', 'Crea
 const menuItems = [
   {
     id: 'classic-box',
-    stripePriceId: 'price_1S7g5AHHRq5TjW22st91zcS1', // Update with your actual price ID
+    stripePriceId: 'price_1S7jekHHRq5TjW227rRf1qsQ', // Updated
     name: 'Classic Box',
     price: 30,
     description: '1 Pizza Wrap, 2 Tacos, 1 Loaded Fries',
@@ -18,7 +18,7 @@ const menuItems = [
   },
   {
     id: 'family-box',
-    stripePriceId: 'price_1S7gDPHHRq5TjW22bswkLYsc', // Update with your actual price ID
+    stripePriceId: 'price_1S7jevHHRq5TjW226NlDjIbO', // Updated
     name: 'Family Box',
     price: 55,
     description: '2 Pizza Wraps, 4 Tacos, 2 Loaded Fries',
@@ -28,7 +28,7 @@ const menuItems = [
   },
   {
     id: 'party-box',
-    stripePriceId: 'price_1S7gDoHHRq5TjW229HOABSaC',
+    stripePriceId: 'price_1S7jfBHHRq5TjW22NBFU3sN4', // Updated
     name: 'Party Box',
     price: 199,
     description: '10 Half-Wraps, 20 Tacos, 30 Wings, 2 XL Fries, 2 × 2L Pops',
