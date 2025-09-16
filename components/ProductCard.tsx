@@ -86,17 +86,15 @@ export default function ProductCard() {
         
         // Calculate delivery fee based on distance
         let fee = 0
-        if (distanceInKm <= 5) {
-          fee = 0
-        } else if (distanceInKm <= 10) {
-          fee = 5
-        } else if (distanceInKm <= 20) {
-          fee = 10
-        } else if (distanceInKm <= 20) {
-          fee = 15
-        } else {
-          fee = -1 // Don't deliver
-        }
+if (distanceInKm <= 5) {
+  fee = 0
+} else if (distanceInKm <= 10) {
+  fee = 5
+} else if (distanceInKm <= 20) {
+  fee = 15
+} else {
+  fee = -1 // Don't deliver over 20km
+}
         
         setDeliveryFee(fee)
         
