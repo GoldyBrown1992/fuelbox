@@ -432,8 +432,7 @@ export default function ProductCard() {
         { level: 1, label: 'Mild', display: '🌶️', color: 'bg-green-100' },
         { level: 2, label: 'Spicy', display: '🌶️🌶️', color: 'bg-yellow-100' },
         { level: 3, label: 'Hot', display: '🌶️🌶️🌶️', color: 'bg-orange-100' },
-        { level: 4, label: 'Extra', display: '🌶️🌶️🌶️🌶️', color: 'bg-red-100' }
-      ].map(({ level, label, display, color }) => (
+             ].map(({ level, label, display, color }) => (
         <button
           key={level}
           onClick={() => setSpiceLevels({...spiceLevels, [item.id]: level})}
