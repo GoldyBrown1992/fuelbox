@@ -260,7 +260,7 @@ export default function ProductCard() {
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
           >
-            🌙 Late Night Menu
+            24-7 Menu
           </button>
           <button
             onClick={() => setMenuType('corporate')}
