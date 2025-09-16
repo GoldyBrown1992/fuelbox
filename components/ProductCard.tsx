@@ -19,9 +19,9 @@ const menuItems = [
     drinks: 0
   },
   {
-    id: 'family-box',
+    id: 'duo-box',
     stripePriceId: 'price_1S7jevHHRq5TjW226NlDjIbO',
-    name: 'Family Box',
+    name: 'Duo Box',
     price: 55,
     description: '2 Pizza Wraps, 4 Tacos, 2 Loaded Fries',
     icon: '👨‍👩‍👧‍👦',
