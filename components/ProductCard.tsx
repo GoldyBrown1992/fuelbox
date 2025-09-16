@@ -59,24 +59,24 @@ export default function ProductCard() {
 
   // Calculate delivery details using Distance Matrix API
   const calculateDeliveryDetails = async (address: string) => {
-    if (!window.google || !address) return
+  if (!window.google || !address) return
 
-    const service = new window.google.maps.DistanceMatrixService()
-    
-    try {
-      const response = await new Promise<any>((resolve, reject) => {
-        service.getDistanceMatrix({
-          origins: [KITCHEN_LOCATION],
-          destinations: [address],
-          travelMode: window.google.maps.TravelMode.DRIVING,
-          unitSystem: window.google.maps.UnitSystem.METRIC,
-          avoidHighways: false,
-          avoidTolls: false
-        }, (result, status) => {
-          if (status === 'OK') resolve(result)
-          else reject(status)
-        })
+  const service = new window.google.maps.DistanceMatrixService()
+  
+  try {
+    const response = await new Promise<any>((resolve, reject) => {
+      service.getDistanceMatrix({
+        origins: [KITCHEN_LOCATION],
+        destinations: [address],
+        travelMode: window.google.maps.TravelMode.DRIVING,
+        unitSystem: window.google.maps.UnitSystem.METRIC,
+        avoidHighways: false,
+        avoidTolls: false
+      }, (result: any, status: any) => {  // Added type annotations here
+        if (status === 'OK') resolve(result)
+        else reject(status)
       })
+    })
 
       if (response.rows[0].elements[0].status === 'OK') {
         const distanceInKm = response.rows[0].elements[0].distance.value / 1000
