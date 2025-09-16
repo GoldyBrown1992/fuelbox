@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Minus, Check, X } from 'lucide-react'
+import { Plus, Minus, Check, X, Loader2 } from 'lucide-react'
 
 type Box = {
   id: number
@@ -20,232 +20,184 @@ function CorporateMenu() {
     veggies: []
   }])
   
-  const proteins = [
-    { value: 'Grilled Chicken', emoji: '🍗' },
-    { value: 'Meat Lovers', emoji: '🥩' },
-    { value: 'Beyond Meat', emoji: '🌱' }
-  ]
+  const [loading, setLoading] = useState(false)
+  const [companyName, setCompanyName] = useState('')
+  const [contactName, setContactName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [deliveryDate, setDeliveryDate] = useState('')
+  const [deliveryTime, setDeliveryTime] = useState('12:00')
+  const [showCheckoutForm, setShowCheckoutForm] = useState(false)
 
-  const sauces = ['Garlic Aioli', 'Mayo', 'Spicy Mayo', 'Honey Garlic', "Nando's Perinaise"]
-  const spiceLevels = ['Mild', 'Spicy', 'Hot']
-  const veggieOptions = [
-    { value: 'Sautéed Onions', emoji: '🧅' },
-    { value: 'Red Peppers', emoji: '🫑' },
-    { value: 'Spinach', emoji: '🥬' }
-  ]
-  
-  const addBox = () => {
-    setBoxes([...boxes, { 
-      id: Date.now(), 
-      protein: 'Grilled Chicken',
-      sauce: 'Garlic Aioli',
-      spiceLevel: 'mild',
-      veggies: []
-    }])
-  }
+  // ... keep all your existing state and functions ...
 
-  const removeBox = (id: number) => {
-    if (boxes.length > 1) {
-      setBoxes(boxes.filter(box => box.id !== id))
+  const handleCorporateCheckout = async () => {
+    if (!companyName || !contactName || !phoneNumber || !deliveryAddress || !deliveryDate) {
+      alert('Please fill in all delivery details')
+      return
     }
-  }
 
-  const updateBox = (id: number, field: keyof Box, value: any) => {
-    setBoxes(boxes.map(box => 
-      box.id === id ? { ...box, [field]: value } : box
-    ))
-  }
+    setLoading(true)
 
-  const toggleVeggie = (id: number, veggie: string) => {
-    const box = boxes.find(b => b.id === id)
-    if (box) {
-      const newVeggies = box.veggies.includes(veggie)
-        ? box.veggies.filter(v => v !== veggie)
-        : [...box.veggies, veggie]
-      updateBox(id, 'veggies', newVeggies)
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceType: 'corporate',
+          productName: `Corporate FuelBox - ${boxes.length} boxes`,
+          quantity: boxes.length,
+          totalPrice: boxes.length * 20,
+          boxes: boxes.map((box, idx) => ({
+            boxNumber: idx + 1,
+            protein: box.protein,
+            sauce: box.sauce,
+            spiceLevel: box.spiceLevel,
+            veggies: box.veggies.join(', ')
+          })),
+          companyName: companyName,
+          customerName: contactName,
+          phoneNumber: phoneNumber,
+          customerEmail: `${phoneNumber.replace(/\D/g, '')}@corporate.surreykitchen.com`,
+          deliveryAddress: deliveryAddress,
+          deliveryDate: deliveryDate,
+          deliveryTime: deliveryTime,
+          fulfillment: 'corporate-delivery'
+        })
+      })
+
+      const data = await response.json()
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 rounded-3xl p-8 mb-6 text-white shadow-xl">
-        <h2 className="text-4xl font-black mb-3">FuelBox Corporate</h2>
-        <div className="flex flex-wrap gap-6 text-base">
-          <div className="flex items-center gap-3 bg-white/20 backdrop-blur rounded-full px-4 py-2">
-            <span className="text-2xl">💰</span>
-            <span className="font-semibold">$20/box</span>
-          </div>
-          <div className="flex items-center gap-3 bg-white/20 backdrop-blur rounded-full px-4 py-2">
-            <span className="text-2xl">📦</span>
-            <span className="font-semibold">Min 10 boxes</span>
-          </div>
-          <div className="flex items-center gap-3 bg-white/20 backdrop-blur rounded-full px-4 py-2">
-            <span className="text-2xl">🚚</span>
-            <span className="font-semibold">Free Vancouver delivery</span>
-          </div>
-        </div>
-      </div>
-
-      {/* What's Included */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-5 mb-6">
-        <p className="text-sm font-bold text-green-900 mb-3">Every box includes:</p>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-            <span className="text-3xl">🥤</span>
-            <p className="text-xs font-medium mt-1 text-gray-700">Water</p>
-          </div>
-          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-            <span className="text-3xl">🍓</span>
-            <p className="text-xs font-medium mt-1 text-gray-700">Fruit Cup</p>
-          </div>
-          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-            <span className="text-3xl">🥛</span>
-            <p className="text-xs font-medium mt-1 text-gray-700">Greek Yogurt</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Box Builder */}
-      <div className="space-y-4 mb-6">
-        {boxes.map((box, index) => (
-          <div key={box.id} className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 relative hover:shadow-lg transition-shadow">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-base font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-1 rounded-full">
-                Box #{index + 1}
-              </span>
-              {boxes.length > 1 && (
-                <button
-                  onClick={() => removeBox(box.id)}
-                  className="text-red-500 hover:bg-red-50 rounded-full p-2 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
+      {/* Keep all your existing header and box builder code... */}
+      
+      {/* Add this checkout form before the sticky footer */}
+      {showCheckoutForm && (
+        <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black mb-4">Delivery Information</h3>
             
-            {/* Step 1: Protein Selection */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 1</span>
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Choose Protein</label>
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-semibold text-gray-600 block mb-1">
+                  Company Name *
+                </label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Acme Corp"
+                />
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {proteins.map(({ value, emoji }) => (
-                  <button
-                    key={value}
-                    onClick={() => updateBox(box.id, 'protein', value)}
-                    className={`p-3 rounded-xl border-2 transition-all ${
-                      box.protein === value
-                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
-                    }`}
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 block mb-1">
+                  Contact Name *
+                </label>
+                <input
+                  type="text"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="John Smith"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 block mb-1">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="(604) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 block mb-1">
+                  Delivery Address *
+                </label>
+                <input
+                  type="text"
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="123 Business St, Vancouver"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 block mb-1">
+                    Delivery Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 block mb-1">
+                    Delivery Time *
+                  </label>
+                  <select
+                    value={deliveryTime}
+                    onChange={(e) => setDeliveryTime(e.target.value)}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-2xl">{emoji}</span>
-                      <span className="text-xs font-semibold">{value}</span>
-                      {box.protein === value && (
-                        <Check className="w-4 h-4 text-blue-600" />
-                      )}
-                    </div>
-                  </button>
-                ))}
+                    <option value="11:00">11:00 AM</option>
+                    <option value="11:30">11:30 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="12:30">12:30 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            {/* Step 2: Veggie Add-ons */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 2</span>
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Add Veggies</label>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {veggieOptions.map(({ value, emoji }) => (
-                  <button
-                    key={value}
-                    onClick={() => toggleVeggie(box.id, value)}
-                    className={`px-3 py-2 rounded-xl border transition-all flex items-center gap-2 ${
-                      box.veggies.includes(value)
-                        ? 'bg-green-500 text-white border-green-500'
-                        : 'bg-white border-gray-200 hover:border-green-400 text-gray-700'
-                    }`}
-                  >
-                    <span>{emoji}</span>
-                    <span className="text-xs font-medium">{value}</span>
-                    {box.veggies.includes(value) && <Check className="w-3 h-3" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Step 3: Sauce Selection */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 3</span>
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Select Sauce</label>
-              </div>
-              <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
-                {sauces.map(sauce => (
-                  <button
-                    key={sauce}
-                    onClick={() => updateBox(box.id, 'sauce', sauce)}
-                    className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      box.sauce === sauce
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {sauce}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Step 4: Spice Level */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 4</span>
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Set Spice Level</label>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {spiceLevels.map((level, idx) => (
-                  <button
-                    key={level}
-                    onClick={() => updateBox(box.id, 'spiceLevel', level.toLowerCase())}
-                    className={`py-3 px-3 rounded-xl text-sm font-bold transition-all ${
-                      box.spiceLevel === level.toLowerCase()
-                        ? idx === 0 ? 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-800 ring-2 ring-green-500'
-                          : idx === 1 ? 'bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-800 ring-2 ring-yellow-500'
-                          : 'bg-gradient-to-br from-red-100 to-orange-100 text-red-800 ring-2 ring-red-500'
-                        : 'bg-gray-50 hover:bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center gap-1">
-                      <span>{'🌶️'.repeat(idx + 1)}</span>
-                      <span>{level}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowCheckoutForm(false)}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCorporateCheckout}
+                disabled={loading}
+                className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-bold disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                ) : (
+                  'Place Order'
+                )}
+              </button>
             </div>
           </div>
-        ))}
+        </div>
+      )}
 
-        {/* Add Box Button */}
-        <button 
-          onClick={addBox}
-          className="w-full py-5 border-2 border-dashed border-blue-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
-        >
-          <div className="flex items-center justify-center gap-3 text-blue-600 font-bold">
-            <div className="bg-blue-100 rounded-full p-2 group-hover:bg-blue-200 transition-colors">
-              <Plus className="w-5 h-5" />
-            </div>
-            <span>Add Another Box</span>
-          </div>
-        </button>
-      </div>
-
-      {/* Sticky Footer */}
+      {/* Updated Sticky Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl rounded-t-3xl p-5 z-50">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-4">
@@ -261,6 +213,7 @@ function CorporateMenu() {
           
           <button 
             disabled={boxes.length < 10}
+            onClick={() => boxes.length >= 10 && setShowCheckoutForm(true)}
             className={`w-full py-4 rounded-2xl font-bold text-lg transition-all transform ${
               boxes.length < 10
                 ? 'bg-gray-200 text-gray-400'
