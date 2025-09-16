@@ -13,7 +13,7 @@ const menuItems = [
     stripePriceId: 'price_1S7jekHHRq5TjW227rRf1qsQ',
     name: 'Classic Box',
     price: 30,
-    description: '1 Pizza Wrap, 2 Tacos, 1 Loaded Fries',
+    description: '1 Pizza melt, 2 Tacos, 1 Loaded Fries',
     icon: '🍕',
     servings: '1 person',
     drinks: 0
@@ -23,7 +23,7 @@ const menuItems = [
     stripePriceId: 'price_1S7jevHHRq5TjW226NlDjIbO',
     name: 'Duo Box',
     price: 55,
-    description: '2 Pizza Wraps, 4 Tacos, 2 Loaded Fries',
+    description: '2 Pizza melts, 4 Tacos, 2 Loaded Fries',
     icon: '👨‍👩‍👧‍👦',
     servings: '2-3 people',
     drinks: 0
@@ -33,7 +33,7 @@ const menuItems = [
     stripePriceId: 'price_1S7jfBHHRq5TjW22NBFU3sN4',
     name: 'Party Box',
     price: 199,
-    description: '10 Half-Wraps, 20 Tacos, 30 Wings, 2 XL Fries, 2 × 2L Pops',
+    description: '10 Half-melts, 20 Tacos, 30 Wings, 2 XL Fries, 2 × 2L Pops',
     icon: '🎉',
     servings: '10 people',
     drinks: 2,
@@ -465,7 +465,7 @@ export default function ProductCard() {
             <div className="mb-4 p-3 bg-gray-100 rounded-lg">
               <p className="text-sm font-semibold mb-1">Selected:</p>
               {drinkSelections[showDrinkModal]?.length > 0 ? (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-melt">
                   {drinkSelections[showDrinkModal].map((drink, idx) => (
                     <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
                       {drink}
