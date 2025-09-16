@@ -49,6 +49,7 @@ export default function ProductCard() {
   const [locationType, setLocationType] = useState<'sfu' | 'other' | ''>('')
   const [locationDetails, setLocationDetails] = useState('')
   const [otherAddress, setOtherAddress] = useState('')
+  const [customerName, setCustomerName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [deliveryInstructions, setDeliveryInstructions] = useState('')
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
@@ -86,15 +87,15 @@ export default function ProductCard() {
         
         // Calculate delivery fee based on distance
         let fee = 0
-if (distanceInKm <= 5) {
-  fee = 0
-} else if (distanceInKm <= 10) {
-  fee = 5
-} else if (distanceInKm <= 20) {
-  fee = 15
-} else {
-  fee = -1 // Don't deliver over 20km
-}
+        if (distanceInKm <= 5) {
+          fee = 0
+        } else if (distanceInKm <= 10) {
+          fee = 5
+        } else if (distanceInKm <= 20) {
+          fee = 15
+        } else {
+          fee = -1 // Don't deliver over 20km
+        }
         
         setDeliveryFee(fee)
         
@@ -106,7 +107,7 @@ if (distanceInKm <= 5) {
       console.error('Distance calculation failed:', error)
       // Fallback to simple calculation
       const lower = address.toLowerCase()
-      if (lower.includes('surrey central')) {
+      if (lower.includes('surrey central') || lower.includes('sfu')) {
         setDeliveryFee(0)
       } else if (lower.includes('surrey')) {
         setDeliveryFee(5)
@@ -165,6 +166,11 @@ if (distanceInKm <= 5) {
       return
     }
 
+    if (!customerName) {
+      alert('Please enter your name')
+      return
+    }
+
     if (!phoneNumber) {
       alert('Please enter your phone number')
       return
@@ -199,7 +205,9 @@ if (distanceInKm <= 5) {
           fulfillment: 'delivery',
           drinks: drinkSelections[item.id] || [],
           deliveryAddress: deliveryAddress,
+          customerName: customerName,
           phoneNumber: phoneNumber,
+          customerEmail: `${phoneNumber.replace(/\D/g, '')}@order.surreykitchen.com`,
           deliveryInstructions: deliveryInstructions,
           deliveryFee: deliveryFee,
           estimatedTime: estimatedTime,
@@ -320,9 +328,22 @@ if (distanceInKm <= 5) {
           </div>
         )}
 
-        {/* Phone and Instructions */}
+        {/* Name, Phone and Instructions */}
         {locationType && (
           <div className="mt-4 space-y-3">
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">
+                Name *
+              </label>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            
             <div>
               <label className="text-sm font-semibold text-gray-600 block mb-1">
                 Phone Number *
@@ -355,7 +376,7 @@ if (distanceInKm <= 5) {
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 5km of SFU Surrey
+          🚚 FREE Delivery within 5km • $5 (6-10km) • $15 (11km+)
         </p>
       </div>
 
