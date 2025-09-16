@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+
 function CorporateMenu() {
   const [boxes, setBoxes] = useState([{ id: 1, protein: '', side: 'fruit' }])
   
@@ -63,3 +67,5 @@ function CorporateMenu() {
     </div>
   )
 }
+
+export default CorporateMenu
