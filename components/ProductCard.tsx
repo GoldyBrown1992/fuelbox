@@ -376,7 +376,7 @@ export default function ProductCard() {
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 5km • $5 (6-10km) • $15 (11km+)
+          🚚 FREE Delivery within 5km of Surrey Central
         </p>
       </div>
 
