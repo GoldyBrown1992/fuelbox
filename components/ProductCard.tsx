@@ -401,23 +401,31 @@ export default function ProductCard() {
               <div className="flex-grow"></div>
 
               <div className="mb-4">
-                <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
-                <div className="flex gap-2 justify-center">
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <button
-                      key={num}
-                      onClick={() => setQuantities({...quantities, [item.id]: num})}
-                      className={`w-12 h-12 rounded-lg font-bold transition-all ${
-                        (quantities[item.id] || 1) === num 
-                          ? 'bg-red-600 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
+  <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
+  <div className="flex items-center justify-center gap-3">
+    <button
+      onClick={() => {
+        const current = quantities[item.id] || 1
+        if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
+      }}
+      className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+    >
+      -
+    </button>
+    <span className="w-12 text-center font-bold text-xl">
+      {quantities[item.id] || 1}
+    </span>
+    <button
+      onClick={() => {
+        const current = quantities[item.id] || 1
+        setQuantities({...quantities, [item.id]: current + 1})
+      }}
+      className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+    >
+      +
+    </button>
+  </div>
+</div>
 
               {item.drinks > 0 && (
                 <button
