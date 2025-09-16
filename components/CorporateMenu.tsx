@@ -26,7 +26,7 @@ function CorporateMenu() {
     { value: 'Beyond Meat', emoji: '🌱' }
   ]
 
-  const sauces = ['Garlic Aioli', 'Spicy Mayo', 'Honey Garlic', "Nando's Perinaise"]
+  const sauces = ['Garlic Aioli', 'Mayo', 'Spicy Mayo', 'Honey Garlic', "Nando's Perinaise"]
   const spiceLevels = ['Mild', 'Spicy', 'Hot']
   const veggieOptions = [
     { value: 'Sautéed Onions', emoji: '🧅' },
@@ -111,7 +111,7 @@ function CorporateMenu() {
         {boxes.map((box, index) => (
           <div key={box.id} className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 relative hover:shadow-lg transition-shadow">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-base font-bold bg-gray-100 px-3 py-1 rounded-full">
+              <span className="text-base font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-1 rounded-full">
                 Box #{index + 1}
               </span>
               {boxes.length > 1 && (
@@ -124,9 +124,12 @@ function CorporateMenu() {
               )}
             </div>
             
-            {/* Protein Selection */}
+            {/* Step 1: Protein Selection */}
             <div className="mb-4">
-              <label className="text-xs font-bold text-gray-600 mb-2 block uppercase tracking-wider">Protein</label>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 1</span>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Choose Protein</label>
+              </div>
               <div className="grid grid-cols-3 gap-2">
                 {proteins.map(({ value, emoji }) => (
                   <button
@@ -150,11 +153,12 @@ function CorporateMenu() {
               </div>
             </div>
 
-            {/* Veggie Add-ons */}
+            {/* Step 2: Veggie Add-ons */}
             <div className="mb-4">
-              <label className="text-xs font-bold text-gray-600 mb-2 block uppercase tracking-wider">
-                Add Veggies <span className="text-gray-400 normal-case">(optional)</span>
-              </label>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 2</span>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Add Veggies</label>
+              </div>
               <div className="flex gap-2 flex-wrap">
                 {veggieOptions.map(({ value, emoji }) => (
                   <button
@@ -174,15 +178,18 @@ function CorporateMenu() {
               </div>
             </div>
 
-            {/* Sauce Selection */}
+            {/* Step 3: Sauce Selection */}
             <div className="mb-4">
-              <label className="text-xs font-bold text-gray-600 mb-2 block uppercase tracking-wider">Sauce</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 3</span>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Select Sauce</label>
+              </div>
+              <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
                 {sauces.map(sauce => (
                   <button
                     key={sauce}
                     onClick={() => updateBox(box.id, 'sauce', sauce)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                       box.sauce === sauce
                         ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -194,9 +201,12 @@ function CorporateMenu() {
               </div>
             </div>
 
-            {/* Spice Level */}
+            {/* Step 4: Spice Level */}
             <div>
-              <label className="text-xs font-bold text-gray-600 mb-2 block uppercase tracking-wider">Spice Level</label>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">STEP 4</span>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Set Spice Level</label>
+              </div>
               <div className="grid grid-cols-3 gap-2">
                 {spiceLevels.map((level, idx) => (
                   <button
