@@ -88,7 +88,7 @@ export default function ProductCard() {
         let fee = 0
         if (distanceInKm <= 5) {
           fee = 0
-        } else if (distanceInKm <= 1-) {
+        } else if (distanceInKm <= 10) {
           fee = 5
         } else if (distanceInKm <= 20) {
           fee = 10
