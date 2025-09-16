@@ -6,6 +6,7 @@ import { Loader2, MapPin, Clock } from 'lucide-react'
 const KITCHEN_LOCATION = 'SFU Surrey, 250-13450 102 Ave, Surrey, BC V3T 0A3'
 
 const drinkOptions = ['Coke', 'Pepsi', 'Sprite', 'Root Beer', 'Dr Pepper', 'Cream Soda']
+const wingFlavors = ['Tandoori', 'Honey Garlic', 'Garlic Parmesan']
 
 const menuItems = [
   {
@@ -16,7 +17,9 @@ const menuItems = [
     description: '1 Pizza melt, 2 Tacos, 1 Loaded Fries',
     icon: '🍕',
     servings: '1 person',
-    drinks: 0
+    drinks: 0,
+    hasSpice: true,
+    hasWings: false
   },
   {
     id: 'duo-box',
@@ -24,9 +27,11 @@ const menuItems = [
     name: 'Duo Box',
     price: 55,
     description: '2 Pizza melts, 4 Tacos, 2 Loaded Fries',
-    icon: '👨‍👩‍👧‍👦',
-    servings: '2-3 people',
-    drinks: 0
+    icon: '👯',
+    servings: '2 people',
+    drinks: 0,
+    hasSpice: true,
+    hasWings: false
   },
   {
     id: 'party-box',
@@ -37,7 +42,9 @@ const menuItems = [
     icon: '🎉',
     servings: '10 people',
     drinks: 2,
-    badge: 'BEST VALUE'
+    badge: 'BEST VALUE',
+    hasSpice: true,
+    hasWings: true
   }
 ]
 
@@ -55,6 +62,8 @@ export default function ProductCard() {
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
   const [estimatedTime, setEstimatedTime] = useState<string>('')
   const [distance, setDistance] = useState<number>(0)
+  const [spiceLevels, setSpiceLevels] = useState<{[key: string]: number}>({})
+  const [wingSelections, setWingSelections] = useState<{[key: string]: string}>({})
   
   const addressInputRef = useRef<HTMLInputElement>(null)
 
@@ -182,6 +191,11 @@ export default function ProductCard() {
       return
     }
     
+    if (item.hasWings && !wingSelections[item.id]) {
+      alert('Please select a wing flavor')
+      return
+    }
+    
     if (item.drinks > 0 && (!drinkSelections[item.id] || drinkSelections[item.id].length !== item.drinks)) {
       setShowDrinkModal(item.id)
       return
@@ -211,7 +225,9 @@ export default function ProductCard() {
           deliveryInstructions: deliveryInstructions,
           deliveryFee: deliveryFee,
           estimatedTime: estimatedTime,
-          distance: distance
+          distance: distance,
+          spiceLevel: spiceLevels[item.id] ?? 1,
+          wingFlavor: wingSelections[item.id] || ''
         })
       })
 
@@ -376,7 +392,7 @@ export default function ProductCard() {
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 5km of Surrey Central
+          🚚 FREE Delivery within 5km • $5 (6-10km) • $15 (11km+)
         </p>
       </div>
 
@@ -400,32 +416,80 @@ export default function ProductCard() {
 
               <div className="flex-grow"></div>
 
+              {/* Spice Level Selector */}
+              {item.hasSpice && (
+                <div className="mb-4">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
+                  <div className="flex justify-center gap-1">
+                    {[
+                      { level: 0, label: 'None', icon: '🥛' },
+                      { level: 1, label: 'Mild', icon: '🌶️' },
+                      { level: 2, label: 'Medium', icon: '🌶️🌶️' },
+                      { level: 3, label: 'Hot', icon: '🌶️🌶️🌶️' }
+                    ].map(({ level, label, icon }) => (
+                      <button
+                        key={level}
+                        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: level})}
+                        className={`px-2 py-2 rounded-lg text-sm font-semibold transition-all ${
+                          (spiceLevels[item.id] ?? 1) === level 
+                            ? 'bg-red-600 text-white' 
+                            : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                        title={label}
+                      >
+                        {icon}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Wing Flavor Selector - Only for Party Box */}
+              {item.hasWings && (
+                <div className="mb-4">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">Wing Flavor (30 wings):</label>
+                  <select 
+                    value={wingSelections[item.id] || ''}
+                    onChange={(e) => setWingSelections({...wingSelections, [item.id]: e.target.value})}
+                    className="w-full p-2 border rounded-lg text-sm"
+                  >
+                    <option value="">Select flavor...</option>
+                    {wingFlavors.map(flavor => (
+                      <option key={flavor} value={flavor}>{flavor}</option>
+                    ))}
+                    <option value="mixed">Mixed (10 of each)</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Quantity Selector */}
               <div className="mb-4">
-  <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
-  <div className="flex items-center justify-center gap-3">
-    <button
-      onClick={() => {
-        const current = quantities[item.id] || 1
-        if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
-      }}
-      className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
-    >
-      -
-    </button>
-    <span className="w-12 text-center font-bold text-xl">
-      {quantities[item.id] || 1}
-    </span>
-    <button
-      onClick={() => {
-        const current = quantities[item.id] || 1
-        setQuantities({...quantities, [item.id]: current + 1})
-      }}
-      className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
-    >
-      +
-    </button>
-  </div>
-</div>
+                <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => {
+                      const current = quantities[item.id] || 1
+                      if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
+                    }}
+                    className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+                    disabled={!quantities[item.id] || quantities[item.id] <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="w-12 text-center font-bold text-xl">
+                    {quantities[item.id] || 1}
+                  </span>
+                  <button
+                    onClick={() => {
+                      const current = quantities[item.id] || 1
+                      if (current < 10) setQuantities({...quantities, [item.id]: current + 1})
+                    }}
+                    className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
 
               {item.drinks > 0 && (
                 <button
@@ -465,7 +529,7 @@ export default function ProductCard() {
             <div className="mb-4 p-3 bg-gray-100 rounded-lg">
               <p className="text-sm font-semibold mb-1">Selected:</p>
               {drinkSelections[showDrinkModal]?.length > 0 ? (
-                <div className="flex gap-2 flex-melt">
+                <div className="flex gap-2 flex-wrap">
                   {drinkSelections[showDrinkModal].map((drink, idx) => (
                     <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
                       {drink}
