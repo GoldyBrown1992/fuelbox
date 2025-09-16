@@ -3,7 +3,7 @@ import Stripe from 'stripe'
 
 export async function POST(req: NextRequest) {
   console.log('=== CHECKOUT API START ===')
-
+  
   try {
     // Ensure Stripe secret key exists
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Initialize Stripe client (let it use your account’s default API version)
+    // Initialize Stripe client
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
     // Parse request body
@@ -28,6 +28,25 @@ export async function POST(req: NextRequest) {
       pickupLocation = '',
       priceId,
       productName,
+      // Fields for all delivery orders
+      customerName,
+      phoneNumber,
+      customerEmail,
+      deliveryAddress,
+      deliveryInstructions,
+      deliveryFee = 0,
+      estimatedTime,
+      distance,
+      // Fields for midnight orders
+      drinks = [],
+      spiceLevel,
+      wingFlavor = {},
+      // Fields for corporate orders
+      companyName,
+      deliveryDate,
+      deliveryTime,
+      boxes = [],
+      totalPrice
     } = body
 
     // Guard: App URL must exist
@@ -39,7 +58,47 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Handle Midnight Box orders
+    // Handle Corporate orders
+    if (priceType === 'corporate') {
+      console.log('Processing Corporate order for:', companyName)
+      
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'cad',
+              product_data: {
+                name: productName || `Corporate FuelBox - ${quantity} boxes`,
+                description: `Corporate lunch delivery for ${companyName}\nDelivery: ${deliveryDate} at ${deliveryTime}`,
+              },
+              unit_amount: 2000, // $20 per box
+            },
+            quantity: quantity,
+          }
+        ],
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+        customer_email: customerEmail,
+        metadata: {
+          orderType: 'corporate',
+          companyName: companyName || '',
+          contactName: customerName || '',
+          phoneNumber: phoneNumber || '',
+          deliveryAddress: deliveryAddress || '',
+          deliveryDate: deliveryDate || '',
+          deliveryTime: deliveryTime || '',
+          totalBoxes: String(quantity),
+          boxDetails: JSON.stringify(boxes).substring(0, 400), // Stripe has metadata limits
+        },
+      })
+
+      console.log('Corporate session created:', session.id)
+      return NextResponse.json({ url: session.url })
+    }
+
+    // Handle Midnight/24-7 Box orders
     if (priceType === 'midnight') {
       if (!priceId) {
         return NextResponse.json(
@@ -50,21 +109,49 @@ export async function POST(req: NextRequest) {
 
       console.log('Processing Midnight Box order:', productName)
 
+      const lineItems = [
+        {
+          price: priceId,
+          quantity,
+        }
+      ]
+
+      // Add delivery fee if applicable
+      if (deliveryFee > 0) {
+        lineItems.push({
+          price_data: {
+            currency: 'cad',
+            product_data: {
+              name: 'Delivery Fee',
+              description: `Delivery to ${deliveryAddress}`,
+            },
+            unit_amount: deliveryFee * 100, // Convert to cents
+          },
+          quantity: 1,
+        })
+      }
+
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        line_items: [
-          {
-            price: priceId,
-            quantity,
-          },
-        ],
+        line_items: lineItems,
         mode: 'payment',
         success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+        customer_email: customerEmail,
         metadata: {
           orderType: 'midnight',
           productName: productName || 'Unknown',
           quantity: String(quantity),
+          customerName: customerName || '',
+          phoneNumber: phoneNumber || '',
+          deliveryAddress: deliveryAddress || '',
+          deliveryInstructions: deliveryInstructions || '',
+          deliveryFee: String(deliveryFee),
+          estimatedTime: estimatedTime || '',
+          distance: String(distance || 0),
+          spiceLevel: String(spiceLevel || 1),
+          drinks: JSON.stringify(drinks),
+          wingFlavor: JSON.stringify(wingFlavor),
         },
       })
 
@@ -110,10 +197,12 @@ export async function POST(req: NextRequest) {
 
     console.log('Session created successfully:', session.id)
     return NextResponse.json({ url: session.url })
+    
   } catch (error: any) {
     console.error('=== STRIPE ERROR ===')
     console.error('Error message:', error.message)
-
+    console.error('Error stack:', error.stack)
+    
     return NextResponse.json(
       {
         error: 'Checkout failed',
