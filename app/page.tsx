@@ -2,7 +2,6 @@
 
 import Hero from '@/components/Hero'
 import ProductCard from '@/components/ProductCard'
-import BottomNav from '@/components/BottomNav'
 
 export default function Home() {
   return (
