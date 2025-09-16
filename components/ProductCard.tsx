@@ -422,7 +422,7 @@ export default function ProductCard() {
                   <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
                   <div className="flex justify-center gap-1">
                     {[
-                      { level: 0, label: 'None', icon: '🥛' },
+                      { level: 0, label: 'None', icon: '🚫' },
                       { level: 1, label: 'Mild', icon: '🌶️' },
                       { level: 2, label: 'Medium', icon: '🌶️🌶️' },
                       { level: 3, label: 'Hot', icon: '🌶️🌶️🌶️' }
@@ -446,21 +446,62 @@ export default function ProductCard() {
 
               {/* Wing Flavor Selector - Only for Party Box */}
               {item.hasWings && (
-                <div className="mb-4">
-                  <label className="text-sm font-semibold text-gray-600 mb-2 block">Wing Flavor (30 wings):</label>
-                  <select 
-                    value={wingSelections[item.id] || ''}
-                    onChange={(e) => setWingSelections({...wingSelections, [item.id]: e.target.value})}
-                    className="w-full p-2 border rounded-lg text-sm"
-                  >
-                    <option value="">Select flavor...</option>
-                    {wingFlavors.map(flavor => (
-                      <option key={flavor} value={flavor}>{flavor}</option>
-                    ))}
-                    <option value="mixed">Mixed (10 of each)</option>
-                  </select>
-                </div>
-              )}
+  <div className="mb-4">
+    <label className="text-sm font-semibold text-gray-600 mb-2 block">
+      Wing Flavors (30 wings total):
+    </label>
+    <div className="space-y-2">
+      {wingFlavors.map(flavor => (
+        <div key={flavor} className="flex items-center justify-between">
+          <span className="text-sm">{flavor}:</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const current = wingSelections[item.id]?.[flavor] || 0
+                if (current > 0) {
+                  setWingSelections({
+                    ...wingSelections,
+                    [item.id]: {
+                      ...wingSelections[item.id],
+                      [flavor]: current - 10
+                    }
+                  })
+                }
+              }}
+              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300"
+            >
+              -
+            </button>
+            <span className="w-8 text-center text-sm font-bold">
+              {wingSelections[item.id]?.[flavor] || 0}
+            </span>
+            <button
+              onClick={() => {
+                const current = wingSelections[item.id]?.[flavor] || 0
+                const total = Object.values(wingSelections[item.id] || {}).reduce((a: any, b: any) => a + b, 0)
+                if (total < 30) {
+                  setWingSelections({
+                    ...wingSelections,
+                    [item.id]: {
+                      ...wingSelections[item.id],
+                      [flavor]: current + 10
+                    }
+                  })
+                }
+              }}
+              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      ))}
+      <p className="text-xs text-gray-600">
+        Selected: {Object.values(wingSelections[item.id] || {}).reduce((a: any, b: any) => a + b, 0)}/30
+      </p>
+    </div>
+  </div>
+)}
 
               {/* Quantity Selector */}
               <div className="mb-4">
