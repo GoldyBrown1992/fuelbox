@@ -8,7 +8,7 @@ function CorporateMenu() {
   const addBox = () => {
     setBoxes([...boxes, { id: boxes.length + 1, protein: '', side: 'fruit' }])
   }
-
+  
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-xl shadow-md p-6 mb-4">
