@@ -423,70 +423,30 @@ export default function ProductCard() {
               <div className="flex-grow"></div>
 
               {/* Spice Level Selector */}
-              {/* Spice Level Selector */}
 {item.hasSpice && (
   <div className="mb-4">
     <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
-    <div className="grid grid-cols-5 gap-1">
-      <button
-        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 0})}
-        className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-          (spiceLevels[item.id] ?? 1) === 0 
-            ? 'bg-gray-200 ring-2 ring-gray-500' 
-            : 'bg-gray-50 hover:bg-gray-100'
-        }`}
-      >
-        <span className="text-2xl">❌</span>
-        <span className="text-xs font-bold mt-1">NONE</span>
-      </button>
-      
-      <button
-        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 1})}
-        className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-          (spiceLevels[item.id] ?? 1) === 1 
-            ? 'bg-green-100 ring-2 ring-green-500' 
-            : 'bg-gray-50 hover:bg-gray-100'
-        }`}
-      >
-        <span className="text-2xl">🫑</span>
-        <span className="text-xs font-bold mt-1">MILD</span>
-      </button>
-      
-      <button
-        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 2})}
-        className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-          (spiceLevels[item.id] ?? 1) === 2 
-            ? 'bg-yellow-100 ring-2 ring-yellow-500' 
-            : 'bg-gray-50 hover:bg-gray-100'
-        }`}
-      >
-        <span className="text-2xl">🌶️🌶️</span>
-        <span className="text-xs font-bold mt-1">SPICY</span>
-      </button>
-      
-      <button
-        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 3})}
-        className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-          (spiceLevels[item.id] ?? 1) === 3 
-            ? 'bg-orange-100 ring-2 ring-orange-500' 
-            : 'bg-gray-50 hover:bg-gray-100'
-        }`}
-      >
-        <span className="text-2xl">🌶️🌶️🌶️</span>
-        <span className="text-xs font-bold mt-1">HOT</span>
-      </button>
-      
-      <button
-        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 4})}
-        className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-          (spiceLevels[item.id] ?? 1) === 4 
-            ? 'bg-red-100 ring-2 ring-red-500' 
-            : 'bg-gray-50 hover:bg-gray-100'
-        }`}
-      >
-        <span className="text-2xl">🌶️🌶️🌶️🌶️</span>
-        <span className="text-xs font-bold mt-1">EXTRA</span>
-      </button>
+    <div className="grid grid-cols-4 gap-1">
+      {[
+        { level: 0, label: 'None', display: '❌', color: 'bg-gray-100' },
+        { level: 1, label: 'Mild', display: '🌶️', color: 'bg-green-100' },
+        { level: 2, label: 'Spicy', display: '🌶️🌶️', color: 'bg-yellow-100' },
+        { level: 3, label: 'Hot', display: '🌶️🌶️🌶️', color: 'bg-orange-100' },
+        { level: 4, label: 'Extra', display: '🌶️🌶️🌶️🌶️', color: 'bg-red-100' }
+      ].map(({ level, label, display, color }) => (
+        <button
+          key={level}
+          onClick={() => setSpiceLevels({...spiceLevels, [item.id]: level})}
+          className={`py-3 px-2 rounded-lg transition-all ${
+            (spiceLevels[item.id] ?? 1) === level 
+              ? `${color} ring-2 ring-red-500 shadow-md` 
+              : 'bg-gray-50 hover:bg-gray-100'
+          }`}
+        >
+          <div className="text-lg">{display}</div>
+          <div className="text-xs font-semibold mt-1">{label}</div>
+        </button>
+      ))}
     </div>
   </div>
 )}
