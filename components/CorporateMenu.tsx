@@ -3,8 +3,16 @@
 import { useState } from 'react'
 import { Plus, Minus, Check, X } from 'lucide-react'
 
+type Box = {
+  id: number
+  protein: string
+  sauce: string
+  spiceLevel: string
+  veggies: string[]
+}
+
 function CorporateMenu() {
-  const [boxes, setBoxes] = useState([{ 
+  const [boxes, setBoxes] = useState<Box[]>([{ 
     id: 1, 
     protein: 'Grilled Chicken', 
     sauce: 'Garlic Aioli',
@@ -42,7 +50,7 @@ function CorporateMenu() {
     }
   }
 
-  const updateBox = (id: number, field: string, value: any) => {
+  const updateBox = (id: number, field: keyof Box, value: any) => {
     setBoxes(boxes.map(box => 
       box.id === id ? { ...box, [field]: value } : box
     ))
@@ -216,7 +224,7 @@ function CorporateMenu() {
         {/* Add Box Button */}
         <button 
           onClick={addBox}
-          className="w-full py-5 border-3 border-dashed border-blue-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
+          className="w-full py-5 border-2 border-dashed border-blue-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
         >
           <div className="flex items-center justify-center gap-3 text-blue-600 font-bold">
             <div className="bg-blue-100 rounded-full p-2 group-hover:bg-blue-200 transition-colors">
@@ -251,7 +259,7 @@ function CorporateMenu() {
           >
             {boxes.length < 10 
               ? `Add ${10 - boxes.length} more boxes (minimum 10)` 
-              : '🎉 Continue to Checkout'}
+              : 'Continue to Checkout'}
           </button>
         </div>
       </div>
