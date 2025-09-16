@@ -86,11 +86,11 @@ export default function ProductCard() {
         
         // Calculate delivery fee based on distance
         let fee = 0
-        if (distanceInKm <= 3) {
+        if (distanceInKm <= 5) {
           fee = 0
-        } else if (distanceInKm <= 7) {
+        } else if (distanceInKm <= 1-) {
           fee = 5
-        } else if (distanceInKm <= 12) {
+        } else if (distanceInKm <= 20) {
           fee = 10
         } else if (distanceInKm <= 20) {
           fee = 15
@@ -113,7 +113,7 @@ export default function ProductCard() {
       } else if (lower.includes('surrey')) {
         setDeliveryFee(5)
       } else {
-        setDeliveryFee(10)
+        setDeliveryFee(15)
       }
     }
   }
@@ -357,7 +357,7 @@ export default function ProductCard() {
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 3km • $5 (3-7km) • $10 (7-12km) • $15 (12-20km)
+          🚚 FREE Delivery within 5km of SFU Surrey
         </p>
       </div>
 
