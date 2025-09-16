@@ -109,7 +109,8 @@ export async function POST(req: NextRequest) {
 
       console.log('Processing Midnight Box order:', productName)
 
-      const lineItems = [
+      // Properly type the lineItems array
+      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
         {
           price: priceId,
           quantity,
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
             unit_amount: deliveryFee * 100, // Convert to cents
           },
           quantity: 1,
-        })
+        } as Stripe.Checkout.SessionCreateParams.LineItem)
       }
 
       const session = await stripe.checkout.sessions.create({
