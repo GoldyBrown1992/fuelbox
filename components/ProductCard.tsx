@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Loader2, MapPin, Clock } from 'lucide-react'
+import CorporateMenu from './CorporateMenu'
 
 const KITCHEN_LOCATION = 'SFU Surrey, 250-13450 102 Ave, Surrey, BC V3T 0A3'
 
@@ -49,6 +50,7 @@ const menuItems = [
 ]
 
 export default function ProductCard() {
+  const [menuType, setMenuType] = useState<'regular' | 'corporate'>('regular')
   const [loading, setLoading] = useState<string | null>(null)
   const [quantities, setQuantities] = useState<{[key: string]: number}>({})
   const [drinkSelections, setDrinkSelections] = useState<{[key: string]: string[]}>({})
@@ -247,442 +249,474 @@ export default function ProductCard() {
 
   return (
     <>
-      {/* Delivery Information */}
-      <div className="max-w-4xl mx-auto mb-6 bg-white rounded-xl shadow-md p-6">
-        <h3 className="font-bold text-lg mb-3 flex items-center">
-          <MapPin className="w-5 h-5 mr-2 text-red-600" />
-          Delivery Information
-        </h3>
-        
-        <div className="flex gap-4 mb-4">
+      {/* Menu Type Toggle */}
+      <div className="max-w-4xl mx-auto mb-4 bg-white rounded-xl shadow-md p-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => {
-              setLocationType('sfu')
-              setOtherAddress('')
-              setDeliveryFee(0)
-              setEstimatedTime('25-35 minutes')
-              setDistance(0)
-            }}
-            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
-              locationType === 'sfu' 
-                ? 'bg-red-600 text-white' 
+            onClick={() => setMenuType('regular')}
+            className={`py-3 rounded-lg font-semibold transition-all ${
+              menuType === 'regular'
+                ? 'bg-red-600 text-white'
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
           >
-            SFU Surrey
+            🌙 Late Night Menu
           </button>
           <button
-            onClick={() => {
-              setLocationType('other')
-              setLocationDetails('')
-              setDeliveryFee(0)
-              setEstimatedTime('')
-              setDistance(0)
-            }}
-            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
-              locationType === 'other' 
-                ? 'bg-red-600 text-white' 
+            onClick={() => setMenuType('corporate')}
+            className={`py-3 rounded-lg font-semibold transition-all ${
+              menuType === 'corporate'
+                ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
           >
-            Other Location
+            💼 Corporate Lunch
           </button>
         </div>
-
-        {locationType === 'sfu' && (
-          <div>
-            <input
-              type="text"
-              placeholder="Enter building, room number, floor (e.g., Podium 2400, 2nd floor)"
-              value={locationDetails}
-              onChange={(e) => setLocationDetails(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
-            />
-            <div className="mt-2 p-2 bg-green-50 rounded-lg">
-              <p className="text-green-600 text-sm font-semibold">✓ Free delivery to SFU Surrey</p>
-              <p className="text-gray-600 text-sm">Estimated delivery: 25-35 minutes</p>
-            </div>
-          </div>
-        )}
-
-        {locationType === 'other' && (
-          <div>
-            <input
-              ref={addressInputRef}
-              type="text"
-              placeholder="Start typing your address..."
-              value={otherAddress}
-              onChange={(e) => {
-                setOtherAddress(e.target.value)
-                // Also trigger calculation for manual typing
-                if (e.target.value.length > 10) {
-                  calculateDeliveryDetails(e.target.value)
-                }
-              }}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
-            />
-            
-            {/* Live delivery details */}
-            {otherAddress && distance > 0 && (
-              <div className="mt-2 p-2 bg-gray-50 rounded-lg">
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="font-semibold">Distance:</span> {distance.toFixed(1)} km
-                  </div>
-                  <div>
-                    <span className="font-semibold">Delivery:</span> 
-                    {deliveryFee === 0 && <span className="text-green-600"> Free</span>}
-                    {deliveryFee > 0 && <span> ${deliveryFee}</span>}
-                    {deliveryFee === -1 && <span className="text-red-600"> Too far</span>}
-                  </div>
-                  {estimatedTime && (
-                    <div className="col-span-2">
-                      <Clock className="w-4 h-4 inline mr-1" />
-                      <span className="font-semibold">Estimated:</span> {estimatedTime}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Name, Phone and Instructions */}
-        {locationType && (
-          <div className="mt-4 space-y-3">
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">
-                Name *
-              </label>
-              <input
-                type="text"
-                placeholder="Your name"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                placeholder="(604) 123-4567"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">
-                Delivery Instructions (optional)
-              </label>
-              <textarea
-                placeholder="Buzzer code, meet in lobby, leave at door, etc."
-                value={deliveryInstructions}
-                onChange={(e) => setDeliveryInstructions(e.target.value)}
-                rows={2}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 resize-none"
-              />
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Info Banner */}
-      <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
-        <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 5km of Surrey Central
-        </p>
-        <p className="text-xs text-green-700 mt-1">
-          No hidden fees • Prices include tax • What you see is what you pay
-        </p>
-      </div>
-
-      {/* Menu Grid */}
-      <div className="grid md:grid-cols-3 gap-8">
-        {menuItems.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative flex flex-col">
-            {item.badge && (
-              <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                {item.badge}
-              </div>
-            )}
-
-            <div className="p-8 text-center flex flex-col flex-grow">
-              <div className="text-7xl mb-4">{item.icon}</div>
-              <h3 className="text-2xl font-black mb-2">{item.name}</h3>
-              <p className="text-gray-600 mb-2">{item.description}</p>
-              <p className="text-sm text-gray-500 mb-4">Serves {item.servings}</p>
-
-              <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
-
-              <div className="flex-grow"></div>
-
-              {/* Spice Level Selector */}
-              {item.hasSpice && (
-                <div className="mb-4">
-                  <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
-                  <div className="flex justify-between gap-1">
-                    <button
-                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 0})}
-                      className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-                        (spiceLevels[item.id] ?? 1) === 0 
-                          ? 'bg-gray-200 ring-2 ring-gray-500' 
-                          : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
-                    >
-                      <span className="text-lg">❌</span>
-                      <span className="text-[10px] font-bold mt-1">None</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 1})}
-                      className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-                        (spiceLevels[item.id] ?? 1) === 1 
-                          ? 'bg-green-100 ring-2 ring-green-500' 
-                          : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
-                    >
-                      <span className="text-lg">🌶️</span>
-                      <span className="text-[10px] font-bold mt-1">Mild</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 2})}
-                      className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-                        (spiceLevels[item.id] ?? 1) === 2 
-                          ? 'bg-yellow-100 ring-2 ring-yellow-500' 
-                          : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
-                    >
-                      <span className="text-lg">🌶️🌶️</span>
-                      <span className="text-[10px] font-bold mt-1">Spicy</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 3})}
-                      className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
-                        (spiceLevels[item.id] ?? 1) === 3 
-                          ? 'bg-orange-100 ring-2 ring-orange-500' 
-                          : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
-                    >
-                      <span className="text-lg">🌶️🌶️🌶️</span>
-                      <span className="text-[10px] font-bold mt-1">Hot</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Wing Flavor Selector - Only for Party Box */}
-              {item.hasWings && (
-                <div className="mb-4">
-                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
-                    Wing Flavors (30 wings total):
-                  </label>
-                  <div className="space-y-2">
-                    {wingFlavors.map(flavor => (
-                      <div key={flavor} className="flex items-center justify-between">
-                        <span className="text-sm">{flavor}:</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => {
-                              const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
-                              if (current > 0) {
-                                setWingSelections({
-                                  ...wingSelections,
-                                  [item.id]: {
-                                    ...(wingSelections[item.id] || {}),
-                                    [flavor]: current - 1
-                                  }
-                                })
-                              }
-                            }}
-                            className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            min="0"
-                            max="30"
-                            value={(wingSelections[item.id] && wingSelections[item.id][flavor]) || 0}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0
-                              const otherFlavors = Object.entries(wingSelections[item.id] || {})
-                                .filter(([f]) => f !== flavor)
-                                .reduce((sum, [, count]) => sum + count, 0)
-                              
-                              if (value >= 0 && value + otherFlavors <= 30) {
-                                setWingSelections({
-                                  ...wingSelections,
-                                  [item.id]: {
-                                    ...(wingSelections[item.id] || {}),
-                                    [flavor]: value
-                                  }
-                                })
-                              }
-                            }}
-                            className="w-12 text-center text-sm font-bold border rounded"
-                          />
-                          <button
-                            onClick={() => {
-                              const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
-                              const total = Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)
-                              if (total < 30) {
-                                setWingSelections({
-                                  ...wingSelections,
-                                  [item.id]: {
-                                    ...(wingSelections[item.id] || {}),
-                                    [flavor]: current + 1
-                                  }
-                                })
-                              }
-                            }}
-                            className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    <p className="text-xs text-gray-600 font-semibold">
-                      Selected: {Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)}/30
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Quantity Selector */}
-              <div className="mb-4">
-                <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
-                <div className="flex items-center justify-center gap-3">
-                  <button
-                    onClick={() => {
-                      const current = quantities[item.id] || 1
-                      if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
-                    }}
-                    className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
-                    disabled={!quantities[item.id] || quantities[item.id] <= 1}
-                  >
-                    -
-                  </button>
-                  <span className="w-12 text-center font-bold text-xl">
-                    {quantities[item.id] || 1}
-                  </span>
-                  <button
-                    onClick={() => {
-                      const current = quantities[item.id] || 1
-                      if (current < 10) setQuantities({...quantities, [item.id]: current + 1})
-                    }}
-                    className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              {item.drinks > 0 && (
-                <button
-                  onClick={() => setShowDrinkModal(item.id)}
-                  className="w-full mb-3 py-2 bg-gray-100 rounded-lg text-sm font-semibold hover:bg-gray-200"
-                >
-                  Select 2L Drinks (2)
-                  {drinkSelections[item.id]?.length === 2 && 
-                    <span className="text-green-600"> ✓</span>
-                  }
-                </button>
-              )}
-
-              <button
-                onClick={() => handleCheckout(item)}
-                disabled={loading === item.id || !locationType}
-                className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
-              >
-                {loading === item.id ? (
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                ) : (
-                  `Order Now - $${item.price * (quantities[item.id] || 1)}`
-                )}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Drink Modal */}
-      {showDrinkModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <h3 className="text-xl font-black mb-4">Select Two 2L Drinks</h3>
-            <p className="text-sm text-gray-600 mb-4">You can select the same drink twice</p>
+      {menuType === 'regular' ? (
+        <>
+          {/* Delivery Information */}
+          <div className="max-w-4xl mx-auto mb-6 bg-white rounded-xl shadow-md p-6">
+            <h3 className="font-bold text-lg mb-3 flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-red-600" />
+              Delivery Information
+            </h3>
             
-            <div className="mb-4 p-3 bg-gray-100 rounded-lg">
-              <p className="text-sm font-semibold mb-1">Selected:</p>
-              {drinkSelections[showDrinkModal]?.length > 0 ? (
-                <div className="flex gap-2 flex-wrap">
-                  {drinkSelections[showDrinkModal].map((drink, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
-                      {drink}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">None selected</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {drinkOptions.map(drink => (
-                <button
-                  key={drink}
-                  onClick={() => {
-                    const current = drinkSelections[showDrinkModal] || []
-                    if (current.length < 2) {
-                      setDrinkSelections({
-                        ...drinkSelections,
-                        [showDrinkModal]: [...current, drink]
-                      })
-                    }
-                  }}
-                  disabled={(drinkSelections[showDrinkModal]?.length || 0) >= 2}
-                  className={`p-3 rounded-lg font-semibold ${
-                    (drinkSelections[showDrinkModal]?.length || 0) >= 2
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
-                  {drink}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex gap-2">
+            <div className="flex gap-4 mb-4">
               <button
                 onClick={() => {
-                  setDrinkSelections({
-                    ...drinkSelections,
-                    [showDrinkModal!]: []
-                  })
+                  setLocationType('sfu')
+                  setOtherAddress('')
+                  setDeliveryFee(0)
+                  setEstimatedTime('25-35 minutes')
+                  setDistance(0)
                 }}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+                  locationType === 'sfu' 
+                    ? 'bg-red-600 text-white' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
               >
-                Clear
+                SFU Surrey
               </button>
               <button
-                onClick={() => setShowDrinkModal(null)}
-                disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
-                className="flex-1 py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
+                onClick={() => {
+                  setLocationType('other')
+                  setLocationDetails('')
+                  setDeliveryFee(0)
+                  setEstimatedTime('')
+                  setDistance(0)
+                }}
+                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all ${
+                  locationType === 'other' 
+                    ? 'bg-red-600 text-white' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
               >
-                Confirm Selection
+                Other Location
               </button>
             </div>
+
+            {locationType === 'sfu' && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Enter building, room number, floor (e.g., Podium 2400, 2nd floor)"
+                  value={locationDetails}
+                  onChange={(e) => setLocationDetails(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+                />
+                <div className="mt-2 p-2 bg-green-50 rounded-lg">
+                  <p className="text-green-600 text-sm font-semibold">✓ Free delivery to SFU Surrey</p>
+                  <p className="text-gray-600 text-sm">Estimated delivery: 25-35 minutes</p>
+                </div>
+              </div>
+            )}
+
+            {locationType === 'other' && (
+              <div>
+                <input
+                  ref={addressInputRef}
+                  type="text"
+                  placeholder="Start typing your address..."
+                  value={otherAddress}
+                  onChange={(e) => {
+                    setOtherAddress(e.target.value)
+                    // Also trigger calculation for manual typing
+                    if (e.target.value.length > 10) {
+                      calculateDeliveryDetails(e.target.value)
+                    }
+                  }}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+                />
+                
+                {/* Live delivery details */}
+                {otherAddress && distance > 0 && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded-lg">
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="font-semibold">Distance:</span> {distance.toFixed(1)} km
+                      </div>
+                      <div>
+                        <span className="font-semibold">Delivery:</span> 
+                        {deliveryFee === 0 && <span className="text-green-600"> Free</span>}
+                        {deliveryFee > 0 && <span> ${deliveryFee}</span>}
+                        {deliveryFee === -1 && <span className="text-red-600"> Too far</span>}
+                      </div>
+                      {estimatedTime && (
+                        <div className="col-span-2">
+                          <Clock className="w-4 h-4 inline mr-1" />
+                          <span className="font-semibold">Estimated:</span> {estimatedTime}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Name, Phone and Instructions */}
+            {locationType && (
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 block mb-1">
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 block mb-1">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="(604) 123-4567"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 block mb-1">
+                    Delivery Instructions (optional)
+                  </label>
+                  <textarea
+                    placeholder="Buzzer code, meet in lobby, leave at door, etc."
+                    value={deliveryInstructions}
+                    onChange={(e) => setDeliveryInstructions(e.target.value)}
+                    rows={2}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 resize-none"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+
+          {/* Info Banner */}
+          <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
+            <p className="font-bold text-green-800">
+              🚚 FREE Delivery within 5km of Surrey Central
+            </p>
+            <p className="text-xs text-green-700 mt-1">
+              No hidden fees • Prices include tax • What you see is what you pay
+            </p>
+          </div>
+
+          {/* Menu Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {menuItems.map((item) => (
+              <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative flex flex-col">
+                {item.badge && (
+                  <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    {item.badge}
+                  </div>
+                )}
+
+                <div className="p-8 text-center flex flex-col flex-grow">
+                  <div className="text-7xl mb-4">{item.icon}</div>
+                  <h3 className="text-2xl font-black mb-2">{item.name}</h3>
+                  <p className="text-gray-600 mb-2">{item.description}</p>
+                  <p className="text-sm text-gray-500 mb-4">Serves {item.servings}</p>
+
+                  <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
+
+                  <div className="flex-grow"></div>
+
+                  {/* Spice Level Selector */}
+                  {item.hasSpice && (
+                    <div className="mb-4">
+                      <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
+                      <div className="flex justify-between gap-1">
+                        <button
+                          onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 0})}
+                          className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                            (spiceLevels[item.id] ?? 1) === 0 
+                              ? 'bg-gray-200 ring-2 ring-gray-500' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="text-lg">❌</span>
+                          <span className="text-[10px] font-bold mt-1">None</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 1})}
+                          className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                            (spiceLevels[item.id] ?? 1) === 1 
+                              ? 'bg-green-100 ring-2 ring-green-500' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="text-lg">🌶️</span>
+                          <span className="text-[10px] font-bold mt-1">Mild</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 2})}
+                          className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                            (spiceLevels[item.id] ?? 1) === 2 
+                              ? 'bg-yellow-100 ring-2 ring-yellow-500' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="text-lg">🌶️🌶️</span>
+                          <span className="text-[10px] font-bold mt-1">Spicy</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 3})}
+                          className={`flex-1 py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                            (spiceLevels[item.id] ?? 1) === 3 
+                              ? 'bg-orange-100 ring-2 ring-orange-500' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="text-lg">🌶️🌶️🌶️</span>
+                          <span className="text-[10px] font-bold mt-1">Hot</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Wing Flavor Selector - Only for Party Box */}
+                  {item.hasWings && (
+                    <div className="mb-4">
+                      <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                        Wing Flavors (30 wings total):
+                      </label>
+                      <div className="space-y-2">
+                        {wingFlavors.map(flavor => (
+                          <div key={flavor} className="flex items-center justify-between">
+                            <span className="text-sm">{flavor}:</span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => {
+                                  const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
+                                  if (current > 0) {
+                                    setWingSelections({
+                                      ...wingSelections,
+                                      [item.id]: {
+                                        ...(wingSelections[item.id] || {}),
+                                        [flavor]: current - 1
+                                      }
+                                    })
+                                  }
+                                }}
+                                className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                min="0"
+                                max="30"
+                                value={(wingSelections[item.id] && wingSelections[item.id][flavor]) || 0}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0
+                                  const otherFlavors = Object.entries(wingSelections[item.id] || {})
+                                    .filter(([f]) => f !== flavor)
+                                    .reduce((sum, [, count]) => sum + count, 0)
+                                  
+                                  if (value >= 0 && value + otherFlavors <= 30) {
+                                    setWingSelections({
+                                      ...wingSelections,
+                                      [item.id]: {
+                                        ...(wingSelections[item.id] || {}),
+                                        [flavor]: value
+                                      }
+                                    })
+                                  }
+                                }}
+                                className="w-12 text-center text-sm font-bold border rounded"
+                              />
+                              <button
+                                onClick={() => {
+                                  const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
+                                  const total = Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)
+                                  if (total < 30) {
+                                    setWingSelections({
+                                      ...wingSelections,
+                                      [item.id]: {
+                                        ...(wingSelections[item.id] || {}),
+                                        [flavor]: current + 1
+                                      }
+                                    })
+                                  }
+                                }}
+                                className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <p className="text-xs text-gray-600 font-semibold">
+                          Selected: {Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)}/30
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Quantity Selector */}
+                  <div className="mb-4">
+                    <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        onClick={() => {
+                          const current = quantities[item.id] || 1
+                          if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
+                        }}
+                        className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+                        disabled={!quantities[item.id] || quantities[item.id] <= 1}
+                      >
+                        -
+                      </button>
+                      <span className="w-12 text-center font-bold text-xl">
+                        {quantities[item.id] || 1}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const current = quantities[item.id] || 1
+                          if (current < 10) setQuantities({...quantities, [item.id]: current + 1})
+                        }}
+                        className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {item.drinks > 0 && (
+                    <button
+                      onClick={() => setShowDrinkModal(item.id)}
+                      className="w-full mb-3 py-2 bg-gray-100 rounded-lg text-sm font-semibold hover:bg-gray-200"
+                    >
+                      Select 2L Drinks (2)
+                      {drinkSelections[item.id]?.length === 2 && 
+                        <span className="text-green-600"> ✓</span>
+                      }
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleCheckout(item)}
+                    disabled={loading === item.id || !locationType}
+                    className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
+                  >
+                    {loading === item.id ? (
+                      <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                    ) : (
+                      `Order Now - $${item.price * (quantities[item.id] || 1)}`
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Drink Modal */}
+          {showDrinkModal && (
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+                <h3 className="text-xl font-black mb-4">Select Two 2L Drinks</h3>
+                <p className="text-sm text-gray-600 mb-4">You can select the same drink twice</p>
+                
+                <div className="mb-4 p-3 bg-gray-100 rounded-lg">
+                  <p className="text-sm font-semibold mb-1">Selected:</p>
+                  {drinkSelections[showDrinkModal]?.length > 0 ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {drinkSelections[showDrinkModal].map((drink, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
+                          {drink}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">None selected</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  {drinkOptions.map(drink => (
+                    <button
+                      key={drink}
+                      onClick={() => {
+                        const current = drinkSelections[showDrinkModal] || []
+                        if (current.length < 2) {
+                          setDrinkSelections({
+                            ...drinkSelections,
+                            [showDrinkModal]: [...current, drink]
+                          })
+                        }
+                      }}
+                      disabled={(drinkSelections[showDrinkModal]?.length || 0) >= 2}
+                      className={`p-3 rounded-lg font-semibold ${
+                        (drinkSelections[showDrinkModal]?.length || 0) >= 2
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                    >
+                      {drink}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setDrinkSelections({
+                        ...drinkSelections,
+                        [showDrinkModal!]: []
+                      })
+                    }}
+                    className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={() => setShowDrinkModal(null)}
+                    disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
+                    className="flex-1 py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
+                  >
+                    Confirm Selection
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <CorporateMenu />
       )}
     </>
   )
