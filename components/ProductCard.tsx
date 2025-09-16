@@ -63,7 +63,7 @@ export default function ProductCard() {
   const [estimatedTime, setEstimatedTime] = useState<string>('')
   const [distance, setDistance] = useState<number>(0)
   const [spiceLevels, setSpiceLevels] = useState<{[key: string]: number}>({})
-  const [wingSelections, setWingSelections] = useState<{[key: string]: string}>({})
+  const [wingSelections, setWingSelections] = useState<{[key: string]: {[flavor: string]: number}}>({})
   
   const addressInputRef = useRef<HTMLInputElement>(null)
 
@@ -191,9 +191,12 @@ export default function ProductCard() {
       return
     }
     
-    if (item.hasWings && !wingSelections[item.id]) {
-      alert('Please select a wing flavor')
-      return
+    if (item.hasWings) {
+      const totalWings = Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)
+      if (totalWings !== 30) {
+        alert('Please select exactly 30 wings')
+        return
+      }
     }
     
     if (item.drinks > 0 && (!drinkSelections[item.id] || drinkSelections[item.id].length !== item.drinks)) {
@@ -227,7 +230,7 @@ export default function ProductCard() {
           estimatedTime: estimatedTime,
           distance: distance,
           spiceLevel: spiceLevels[item.id] ?? 1,
-          wingFlavor: wingSelections[item.id] || ''
+          wingFlavor: wingSelections[item.id] || {}
         })
       })
 
@@ -392,7 +395,7 @@ export default function ProductCard() {
       {/* Info Banner */}
       <div className="max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center">
         <p className="font-bold text-green-800">
-          🚚 FREE Delivery within 5km • $5 (6-10km) • $15 (11km+)
+          🚚 FREE Delivery within 5km of Surrey Central
         </p>
       </div>
 
@@ -422,7 +425,7 @@ export default function ProductCard() {
                   <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
                   <div className="flex justify-center gap-1">
                     {[
-                      { level: 0, label: 'None', icon: '🚫' },
+                      { level: 0, label: 'None', icon: '❌' },
                       { level: 1, label: 'Mild', icon: '🌶️' },
                       { level: 2, label: 'Medium', icon: '🌶️🌶️' },
                       { level: 3, label: 'Hot', icon: '🌶️🌶️🌶️' }
@@ -446,62 +449,82 @@ export default function ProductCard() {
 
               {/* Wing Flavor Selector - Only for Party Box */}
               {item.hasWings && (
-  <div className="mb-4">
-    <label className="text-sm font-semibold text-gray-600 mb-2 block">
-      Wing Flavors (30 wings total):
-    </label>
-    <div className="space-y-2">
-      {wingFlavors.map(flavor => (
-        <div key={flavor} className="flex items-center justify-between">
-          <span className="text-sm">{flavor}:</span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                const current = wingSelections[item.id]?.[flavor] || 0
-                if (current > 0) {
-                  setWingSelections({
-                    ...wingSelections,
-                    [item.id]: {
-                      ...wingSelections[item.id],
-                      [flavor]: current - 10
-                    }
-                  })
-                }
-              }}
-              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300"
-            >
-              -
-            </button>
-            <span className="w-8 text-center text-sm font-bold">
-              {wingSelections[item.id]?.[flavor] || 0}
-            </span>
-            <button
-              onClick={() => {
-                const current = wingSelections[item.id]?.[flavor] || 0
-                const total = Object.values(wingSelections[item.id] || {}).reduce((a: any, b: any) => a + b, 0)
-                if (total < 30) {
-                  setWingSelections({
-                    ...wingSelections,
-                    [item.id]: {
-                      ...wingSelections[item.id],
-                      [flavor]: current + 10
-                    }
-                  })
-                }
-              }}
-              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300"
-            >
-              +
-            </button>
-          </div>
-        </div>
-      ))}
-      <p className="text-xs text-gray-600">
-        Selected: {Object.values(wingSelections[item.id] || {}).reduce((a: any, b: any) => a + b, 0)}/30
-      </p>
-    </div>
-  </div>
-)}
+                <div className="mb-4">
+                  <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                    Wing Flavors (30 wings total):
+                  </label>
+                  <div className="space-y-2">
+                    {wingFlavors.map(flavor => (
+                      <div key={flavor} className="flex items-center justify-between">
+                        <span className="text-sm">{flavor}:</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
+                              if (current > 0) {
+                                setWingSelections({
+                                  ...wingSelections,
+                                  [item.id]: {
+                                    ...(wingSelections[item.id] || {}),
+                                    [flavor]: current - 1
+                                  }
+                                })
+                              }
+                            }}
+                            className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max="30"
+                            value={(wingSelections[item.id] && wingSelections[item.id][flavor]) || 0}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0
+                              const otherFlavors = Object.entries(wingSelections[item.id] || {})
+                                .filter(([f]) => f !== flavor)
+                                .reduce((sum, [, count]) => sum + count, 0)
+                              
+                              if (value >= 0 && value + otherFlavors <= 30) {
+                                setWingSelections({
+                                  ...wingSelections,
+                                  [item.id]: {
+                                    ...(wingSelections[item.id] || {}),
+                                    [flavor]: value
+                                  }
+                                })
+                              }
+                            }}
+                            className="w-12 text-center text-sm font-bold border rounded"
+                          />
+                          <button
+                            onClick={() => {
+                              const current = (wingSelections[item.id] && wingSelections[item.id][flavor]) || 0
+                              const total = Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)
+                              if (total < 30) {
+                                setWingSelections({
+                                  ...wingSelections,
+                                  [item.id]: {
+                                    ...(wingSelections[item.id] || {}),
+                                    [flavor]: current + 1
+                                  }
+                                })
+                              }
+                            }}
+                            className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 text-sm font-bold"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <p className="text-xs text-gray-600 font-semibold">
+                      Selected: {Object.values(wingSelections[item.id] || {}).reduce((a, b) => a + b, 0)}/30
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Quantity Selector */}
               <div className="mb-4">
