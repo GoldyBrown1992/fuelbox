@@ -1,3 +1,50 @@
+export default function ProductCard() {
+  const [menuType, setMenuType] = useState<'regular' | 'corporate'>('regular')
+  
+  // ... other state variables
+
+  return (
+    <>
+      {/* Menu Type Toggle */}
+      <div className="max-w-4xl mx-auto mb-4 bg-white rounded-xl shadow-md p-2">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setMenuType('regular')}
+            className={`py-3 rounded-lg font-semibold transition-all ${
+              menuType === 'regular'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            🌙 Late Night Menu
+          </button>
+          <button
+            onClick={() => setMenuType('corporate')}
+            className={`py-3 rounded-lg font-semibold transition-all ${
+              menuType === 'corporate'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            💼 Corporate Lunch
+          </button>
+        </div>
+      </div>
+
+      {menuType === 'regular' ? (
+        // Your existing menu code
+        <>
+          {/* Delivery Information */}
+          {/* Menu Grid */}
+        </>
+      ) : (
+        // Corporate FuelBox Builder
+        <CorporateMenu />
+      )}
+    </>
+  )
+}
+
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
