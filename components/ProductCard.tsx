@@ -397,6 +397,9 @@ export default function ProductCard() {
         <p className="font-bold text-green-800">
           🚚 FREE Delivery within 5km of Surrey Central
         </p>
+        <p className="text-xs text-green-700 mt-1">
+          No hidden fees • Prices include tax • What you see is what you pay
+        </p>
       </div>
 
       {/* Menu Grid */}
@@ -423,26 +426,54 @@ export default function ProductCard() {
               {item.hasSpice && (
                 <div className="mb-4">
                   <label className="text-sm font-semibold text-gray-600 mb-2 block">Spice Level:</label>
-                  <div className="flex justify-center gap-1">
-                    {[
-                      { level: 0, label: 'None', icon: '❌' },
-                      { level: 1, label: 'Mild', icon: '🌶️' },
-                      { level: 2, label: 'Medium', icon: '🌶️🌶️' },
-                      { level: 3, label: 'Hot', icon: '🌶️🌶️🌶️' }
-                    ].map(({ level, label, icon }) => (
-                      <button
-                        key={level}
-                        onClick={() => setSpiceLevels({...spiceLevels, [item.id]: level})}
-                        className={`px-2 py-2 rounded-lg text-sm font-semibold transition-all ${
-                          (spiceLevels[item.id] ?? 1) === level 
-                            ? 'bg-red-600 text-white' 
-                            : 'bg-gray-100 hover:bg-gray-200'
-                        }`}
-                        title={label}
-                      >
-                        {icon}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-4 gap-1">
+                    <button
+                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 1})}
+                      className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                        (spiceLevels[item.id] ?? 1) === 1 
+                          ? 'bg-green-100 ring-2 ring-green-500' 
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <span className="text-2xl">🌶️</span>
+                      <span className="text-xs font-bold mt-1">MILD</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 2})}
+                      className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                        (spiceLevels[item.id] ?? 1) === 2 
+                          ? 'bg-yellow-100 ring-2 ring-yellow-500' 
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <span className="text-2xl">🌶️🌶️</span>
+                      <span className="text-xs font-bold mt-1">SPICY</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 3})}
+                      className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                        (spiceLevels[item.id] ?? 1) === 3 
+                          ? 'bg-orange-100 ring-2 ring-orange-500' 
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <span className="text-2xl">🌶️🌶️🌶️</span>
+                      <span className="text-xs font-bold mt-1">HOT</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setSpiceLevels({...spiceLevels, [item.id]: 4})}
+                      className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center ${
+                        (spiceLevels[item.id] ?? 1) === 4 
+                          ? 'bg-red-100 ring-2 ring-red-500' 
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <span className="text-2xl">🌶️🌶️🌶️🌶️</span>
+                      <span className="text-xs font-bold mt-1">EXTRA</span>
+                    </button>
                   </div>
                 </div>
               )}
