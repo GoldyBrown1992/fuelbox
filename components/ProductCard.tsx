@@ -59,24 +59,24 @@ export default function ProductCard() {
 
   // Calculate delivery details using Distance Matrix API
   const calculateDeliveryDetails = async (address: string) => {
-  if (!window.google || !address) return
+    if (!window.google || !address) return
 
-  const service = new window.google.maps.DistanceMatrixService()
-  
-  try {
-    const response = await new Promise<any>((resolve, reject) => {
-      service.getDistanceMatrix({
-        origins: [KITCHEN_LOCATION],
-        destinations: [address],
-        travelMode: window.google.maps.TravelMode.DRIVING,
-        unitSystem: window.google.maps.UnitSystem.METRIC,
-        avoidHighways: false,
-        avoidTolls: false
-      }, (result: any, status: any) => {  // Added type annotations here
-        if (status === 'OK') resolve(result)
-        else reject(status)
+    const service = new window.google.maps.DistanceMatrixService()
+    
+    try {
+      const response = await new Promise<any>((resolve, reject) => {
+        service.getDistanceMatrix({
+          origins: [KITCHEN_LOCATION],
+          destinations: [address],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.METRIC,
+          avoidHighways: false,
+          avoidTolls: false
+        }, (result: any, status: any) => {
+          if (status === 'OK') resolve(result)
+          else reject(status)
+        })
       })
-    })
 
       if (response.rows[0].elements[0].status === 'OK') {
         const distanceInKm = response.rows[0].elements[0].distance.value / 1000
@@ -361,12 +361,143 @@ export default function ProductCard() {
         </p>
       </div>
 
-      {/* Menu Grid - rest stays the same */}
+      {/* Menu Grid */}
       <div className="grid md:grid-cols-3 gap-8">
-        {/* ... your existing menu items code ... */}
+        {menuItems.map((item) => (
+          <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden relative flex flex-col">
+            {item.badge && (
+              <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                {item.badge}
+              </div>
+            )}
+
+            <div className="p-8 text-center flex flex-col flex-grow">
+              <div className="text-7xl mb-4">{item.icon}</div>
+              <h3 className="text-2xl font-black mb-2">{item.name}</h3>
+              <p className="text-gray-600 mb-2">{item.description}</p>
+              <p className="text-sm text-gray-500 mb-4">Serves {item.servings}</p>
+
+              <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
+
+              <div className="flex-grow"></div>
+
+              <div className="mb-4">
+                <label className="text-sm font-semibold text-gray-600 mb-2 block">Quantity:</label>
+                <div className="flex gap-2 justify-center">
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <button
+                      key={num}
+                      onClick={() => setQuantities({...quantities, [item.id]: num})}
+                      className={`w-12 h-12 rounded-lg font-bold transition-all ${
+                        (quantities[item.id] || 1) === num 
+                          ? 'bg-red-600 text-white' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {item.drinks > 0 && (
+                <button
+                  onClick={() => setShowDrinkModal(item.id)}
+                  className="w-full mb-3 py-2 bg-gray-100 rounded-lg text-sm font-semibold hover:bg-gray-200"
+                >
+                  Select 2L Drinks (2)
+                  {drinkSelections[item.id]?.length === 2 && 
+                    <span className="text-green-600"> ✓</span>
+                  }
+                </button>
+              )}
+
+              <button
+                onClick={() => handleCheckout(item)}
+                disabled={loading === item.id || !locationType}
+                className="w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white transition-all transform hover:scale-105 disabled:opacity-50"
+              >
+                {loading === item.id ? (
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                ) : (
+                  `Order Now - $${item.price * (quantities[item.id] || 1)}`
+                )}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Drink Modal - stays the same */}
+      {/* Drink Modal */}
+      {showDrinkModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-black mb-4">Select Two 2L Drinks</h3>
+            <p className="text-sm text-gray-600 mb-4">You can select the same drink twice</p>
+            
+            <div className="mb-4 p-3 bg-gray-100 rounded-lg">
+              <p className="text-sm font-semibold mb-1">Selected:</p>
+              {drinkSelections[showDrinkModal]?.length > 0 ? (
+                <div className="flex gap-2 flex-wrap">
+                  {drinkSelections[showDrinkModal].map((drink, idx) => (
+                    <span key={idx} className="px-2 py-1 bg-white rounded text-sm">
+                      {drink}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">None selected</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {drinkOptions.map(drink => (
+                <button
+                  key={drink}
+                  onClick={() => {
+                    const current = drinkSelections[showDrinkModal] || []
+                    if (current.length < 2) {
+                      setDrinkSelections({
+                        ...drinkSelections,
+                        [showDrinkModal]: [...current, drink]
+                      })
+                    }
+                  }}
+                  disabled={(drinkSelections[showDrinkModal]?.length || 0) >= 2}
+                  className={`p-3 rounded-lg font-semibold ${
+                    (drinkSelections[showDrinkModal]?.length || 0) >= 2
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  {drink}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setDrinkSelections({
+                    ...drinkSelections,
+                    [showDrinkModal!]: []
+                  })
+                }}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setShowDrinkModal(null)}
+                disabled={(drinkSelections[showDrinkModal]?.length || 0) !== 2}
+                className="flex-1 py-3 bg-green-500 text-white rounded-lg font-bold disabled:bg-gray-300"
+              >
+                Confirm Selection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
