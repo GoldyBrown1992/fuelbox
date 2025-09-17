@@ -71,3 +71,40 @@ model Subscriber {
   @@index([email])
   @@index([createdAt])
 }
+model User {
+  id              String   @id @default(cuid())
+  phone           String   @unique
+  pinHash         String?
+  cashbackBalance Float    @default(0)
+  totalEarned     Float    @default(0)
+  totalRedeemed   Float    @default(0)
+  failedAttempts  Int      @default(0)
+  lockedUntil     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  transactions    CashbackTransaction[]
+  orders          Order[]
+}
+
+model CashbackTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // 'earned' | 'redeemed'
+  amount      Float
+  orderId     String?
+  description String?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  stripeId    String   @unique
+  amount      Float
+  status      String
+  createdAt   DateTime @default(now())
+}
