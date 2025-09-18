@@ -67,7 +67,79 @@ export default function ProductCard() {
   const [spiceLevels, setSpiceLevels] = useState<{[key: string]: number}>({})
   const [wingSelections, setWingSelections] = useState<{[key: string]: {[flavor: string]: number}}>({})
   
+  // Cashback system states
+  const [userPin, setUserPin] = useState('')
+  const [cashbackBalance, setCashbackBalance] = useState(0)
+  const [isVerified, setIsVerified] = useState(false)
+  const [showPinModal, setShowPinModal] = useState(false)
+  const [showCreatePinModal, setShowCreatePinModal] = useState(false)
+  const [newPin, setNewPin] = useState('')
+  const [confirmPin, setConfirmPin] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [applyCashback, setApplyCashback] = useState<{[key: string]: number}>({})
+  const [userExists, setUserExists] = useState(false)
+  
   const addressInputRef = useRef<HTMLInputElement>(null)
+
+  // Check cashback when phone number changes
+  const checkCashback = async () => {
+    if (!phoneNumber || phoneNumber.replace(/\D/g, '').length < 10) return
+    
+    try {
+      const response = await fetch('/api/cashback/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          phone: phoneNumber.replace(/\D/g, '')
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (data.exists) {
+        setUserExists(true)
+        if (data.requiresPin) {
+          setShowPinModal(true)
+        }
+      } else {
+        setUserExists(false)
+        // New user - will create PIN after first order
+      }
+    } catch (error) {
+      console.error('Cashback check error:', error)
+    }
+  }
+
+  // Verify PIN
+  const verifyPin = async () => {
+    try {
+      const response = await fetch('/api/cashback/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          phone: phoneNumber.replace(/\D/g, ''),
+          pin: userPin
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (data.verified) {
+        setCashbackBalance(data.cashbackBalance)
+        setIsVerified(true)
+        setShowPinModal(false)
+        setPinError('')
+      } else {
+        setPinError(data.error || 'Invalid PIN')
+        if (data.attemptsRemaining) {
+          setPinError(`Invalid PIN. ${data.attemptsRemaining} attempts remaining`)
+        }
+      }
+    } catch (error) {
+      console.error('PIN verification error:', error)
+      setPinError('Something went wrong')
+    }
+  }
 
   // Calculate delivery details using Distance Matrix API
   const calculateDeliveryDetails = async (address: string) => {
@@ -156,6 +228,7 @@ export default function ProductCard() {
 
   const handleCheckout = async (item: any) => {
     const quantity = quantities[item.id] || 1
+    const cashbackToApply = applyCashback[item.id] || 0
     
     if (!locationType) {
       alert('Please select a delivery location')
@@ -212,6 +285,11 @@ export default function ProductCard() {
       ? `SFU Surrey - ${locationDetails}`
       : otherAddress
     
+    // Calculate totals with cashback
+    const subtotal = (item.price * quantity) + deliveryFee
+    const finalTotal = Math.max(0, subtotal - cashbackToApply)
+    const cashbackEarned = finalTotal * 0.05 // 5% cashback
+    
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -225,19 +303,29 @@ export default function ProductCard() {
           drinks: drinkSelections[item.id] || [],
           deliveryAddress: deliveryAddress,
           customerName: customerName,
-          phoneNumber: phoneNumber,
+          phoneNumber: phoneNumber.replace(/\D/g, ''),
           customerEmail: `${phoneNumber.replace(/\D/g, '')}@order.surreykitchen.com`,
           deliveryInstructions: deliveryInstructions,
           deliveryFee: deliveryFee,
           estimatedTime: estimatedTime,
           distance: distance,
           spiceLevel: spiceLevels[item.id] ?? 1,
-          wingFlavor: wingSelections[item.id] || {}
+          wingFlavor: wingSelections[item.id] || {},
+          cashbackApplied: cashbackToApply,
+          cashbackBalance: cashbackBalance,
+          cashbackEarned: cashbackEarned,
+          isNewUser: !userExists
         })
       })
 
       const data = await response.json()
       if (data.url) {
+        // Store order info for success page
+        sessionStorage.setItem('pendingCashback', JSON.stringify({
+          earned: cashbackEarned,
+          isNewUser: !userExists,
+          phone: phoneNumber.replace(/\D/g, '')
+        }))
         window.location.href = data.url
       }
     } catch (error) {
@@ -260,7 +348,7 @@ export default function ProductCard() {
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
           >
-            24-7 Menu
+            🕐 24/7 Menu
           </button>
           <button
             onClick={() => setMenuType('corporate')}
@@ -401,9 +489,46 @@ export default function ProductCard() {
                     type="tel"
                     placeholder="(604) 123-4567"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value)
+                      // Check cashback when phone is complete
+                      if (e.target.value.replace(/\D/g, '').length === 10) {
+                        checkCashback()
+                      }
+                    }}
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500"
                   />
+                  
+                  {/* Cashback Display */}
+                  {phoneNumber.length >= 10 && (
+                    <div className="mt-2">
+                      {!isVerified && userExists ? (
+                        <button
+                          onClick={() => setShowPinModal(true)}
+                          className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                        >
+                          🎁 Check cashback balance →
+                        </button>
+                      ) : isVerified ? (
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-bold text-green-800">
+                              💰 Cashback Balance: ${cashbackBalance.toFixed(2)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-1">
+                            Earn 5% cashback on every order!
+                          </p>
+                        </div>
+                      ) : !userExists && phoneNumber.replace(/\D/g, '').length === 10 ? (
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <p className="text-xs text-blue-700 font-semibold">
+                            🎉 New customer! You'll earn 5% cashback on this order
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
                 
                 <div>
@@ -428,7 +553,7 @@ export default function ProductCard() {
               🚚 FREE Delivery within 5km of Surrey Central
             </p>
             <p className="text-xs text-green-700 mt-1">
-              No hidden fees • Prices include tax • What you see is what you pay
+              No hidden fees • Prices include tax • What you see is what you pay • Earn 5% cashback
             </p>
           </div>
 
@@ -451,6 +576,50 @@ export default function ProductCard() {
                   <div className="text-4xl font-black text-red-600 mb-6">${item.price}</div>
 
                   <div className="flex-grow"></div>
+
+                  {/* Cashback Application for this item */}
+                  {isVerified && cashbackBalance >= 10 && (
+                    <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-semibold text-gray-700">Apply Cashback:</span>
+                        <button
+                          onClick={() => {
+                            const maxApply = Math.min(
+                              cashbackBalance,
+                              Math.floor((item.price * (quantities[item.id] || 1)) * 0.5)
+                            )
+                            setApplyCashback({...applyCashback, [item.id]: maxApply})
+                          }}
+                          className="text-xs bg-yellow-600 text-white px-2 py-1 rounded"
+                        >
+                          Max
+                        </button>
+                      </div>
+                      <input
+                        type="number"
+                        min="0"
+                        max={Math.min(cashbackBalance, Math.floor((item.price * (quantities[item.id] || 1)) * 0.5))}
+                        value={applyCashback[item.id] || 0}
+                        onChange={(e) => {
+                          const value = Math.min(
+                            parseFloat(e.target.value) || 0,
+                            cashbackBalance,
+                            Math.floor((item.price * (quantities[item.id] || 1)) * 0.5)
+                          )
+                          setApplyCashback({...applyCashback, [item.id]: value})
+                        }}
+                        className="w-full p-2 border rounded text-sm"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Max: ${Math.min(cashbackBalance, Math.floor((item.price * (quantities[item.id] || 1)) * 0.5))} (50% of order)
+                      </p>
+                      {applyCashback[item.id] > 0 && (
+                        <p className="text-xs text-green-600 font-semibold mt-1">
+                          Final price: ${((item.price * (quantities[item.id] || 1)) - applyCashback[item.id]).toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Spice Level Selector */}
                   {item.hasSpice && (
@@ -594,7 +763,17 @@ export default function ProductCard() {
                       <button
                         onClick={() => {
                           const current = quantities[item.id] || 1
-                          if (current > 1) setQuantities({...quantities, [item.id]: current - 1})
+                          if (current > 1) {
+                            setQuantities({...quantities, [item.id]: current - 1})
+                            // Update max cashback when quantity changes
+                            if (applyCashback[item.id]) {
+                              const newMax = Math.min(
+                                cashbackBalance,
+                                Math.floor((item.price * (current - 1)) * 0.5)
+                              )
+                              setApplyCashback({...applyCashback, [item.id]: Math.min(applyCashback[item.id], newMax)})
+                            }
+                          }
                         }}
                         className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 font-bold text-xl"
                         disabled={!quantities[item.id] || quantities[item.id] <= 1}
@@ -636,13 +815,65 @@ export default function ProductCard() {
                     {loading === item.id ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
-                      `Order Now - $${item.price * (quantities[item.id] || 1)}`
+                      `Order Now - $${((item.price * (quantities[item.id] || 1)) - (applyCashback[item.id] || 0)).toFixed(0)}`
                     )}
                   </button>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* PIN Modal */}
+          {showPinModal && (
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+                <h3 className="text-xl font-black mb-4">Enter Your PIN</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Enter your 4-digit PIN to access cashback
+                </p>
+                
+                <input
+                  type="password"
+                  maxLength={4}
+                  pattern="\d*"
+                  inputMode="numeric"
+                  value={userPin}
+                  onChange={(e) => setUserPin(e.target.value.replace(/\D/g, ''))}
+                  className="w-full p-4 text-2xl text-center border rounded-lg tracking-widest"
+                  placeholder="••••"
+                  autoFocus
+                />
+                
+                {pinError && (
+                  <p className="text-red-600 text-sm mt-2 text-center">{pinError}</p>
+                )}
+                
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => {
+                      setShowPinModal(false)
+                      setUserPin('')
+                      setPinError('')
+                    }}
+                    className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={verifyPin}
+                    disabled={userPin.length !== 4}
+                    className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold disabled:opacity-50"
+                  >
+                    Verify
+                  </button>
+                </div>
+                
+                <button className="w-full mt-2 text-xs text-blue-600 hover:text-blue-700">
+                  Forgot PIN?
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Drink Modal */}
           {showDrinkModal && (
