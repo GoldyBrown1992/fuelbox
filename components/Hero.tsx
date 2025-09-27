@@ -1,10 +1,9 @@
 'use client'
-
 import { MapPin, Clock, Truck } from 'lucide-react'
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-br from-red-600 via-red-500 to-orange-500">
+    <section className="bg-gradient-to-br from-black via-gray-900 to-black">
       <div className="container mx-auto px-4 py-16 md:py-20 text-center text-white">
         <h1 className="text-5xl md:text-7xl font-black mb-4">
           SURREY'S ONLY 24-7 KITCHEN
@@ -31,7 +30,7 @@ export default function Hero() {
 
         <button 
           onClick={() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })}
-          className="bg-white text-red-600 px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-2xl"
+          className="bg-red-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-red-700 hover:scale-105 transition-all shadow-2xl"
         >
           Order Now
         </button>
