@@ -46,6 +46,10 @@ model Order {
   // Additional Notes
   notes             String?
   
+  // Cashback relationship
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+  
   @@index([email])
   @@index([stripeSessionId])
   @@index([createdAt])
@@ -71,6 +75,7 @@ model Subscriber {
   @@index([email])
   @@index([createdAt])
 }
+
 model User {
   id              String   @id @default(cuid())
   phone           String   @unique
@@ -99,12 +104,4 @@ model CashbackTransaction {
   createdAt   DateTime @default(now())
 }
 
-model Order {
-  id          String   @id @default(cuid())
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
-  stripeId    String   @unique
-  amount      Float
-  status      String
-  createdAt   DateTime @default(now())
-}
+// DELETE THIS DUPLICATE ORDER MODEL - IT'S ALREADY DEFINED ABOVE
